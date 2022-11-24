@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <div class="card">
-      <div class="card-header" style="text-align: center">
+      <div class="card-header">
         <img src="@/assets/logo.png" alt="图片加载失败">
       </div>
       <div class="card-body">
@@ -22,6 +22,7 @@
 }
 .card-header{
   border-radius: 30px 30px 0px 0px;
+  text-align: center;
 }
 .card{
   border-radius: 30px;

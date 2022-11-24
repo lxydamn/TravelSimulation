@@ -1,6 +1,5 @@
 <template>
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-
+<nav class="navbar navbar-expand-lg navbar-light bg-light shadow bg-body rounded">
   <div class="container-fluid">
     <div class="navbar-brand">
       <svg class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"
@@ -8,7 +7,6 @@
                                         fill="#d5a422"></path></svg>
       <router-link class="navbar-brand" :to="{name:'home'}"> Travel Simulation </router-link>
     </div>
-
 
 
     <ul class="navbar-nav" v-if="$store.state.user.is_login">
@@ -32,18 +30,13 @@
           登录
         </router-link>
       </li>
-      <li class="nav-item">
+      <li :class="router_name">
         <router-link class="nav-link" :to="{name: 'user_register'}" role="button">
           注册
         </router-link>
       </li>
     </ul>
 
-    <ul class="navbar-nav">
-      <li>
-        <router-link :class="router_name == 'introduce' ? 'nav-link active' : 'nav-link'" :to="{name:'introduce'}"> 关于本站 </router-link>
-      </li>
-    </ul>
   </div>
 </nav>
 
@@ -59,14 +52,14 @@ export default {
   setup() {
     const store = useStore();
     const route = useRoute();
-    let route_name = computed(() => route.name)
+    let router_name = computed(() => route.name)
 
     const logout = () => {
       store.dispatch("logout");
     }
 
     return {
-      route_name,
+      router_name,
       logout
     }
   }
