@@ -1,9 +1,12 @@
 <template>
   <NavBar></NavBar>
-  <div class="cardContainer">
+  <div class="card" style="background-color: #EFEFEF">
     <router-view></router-view>
   </div>
-  <FootBar></FootBar>
+  <div style="background-color: #212529">
+    <FootBar></FootBar>
+  </div>
+
 
 </template>
 
@@ -26,7 +29,4 @@ body{
   background-color: #EFEFEF;
 }
 
-.cardContainer{
-  height: 700px;
-}
 </style>

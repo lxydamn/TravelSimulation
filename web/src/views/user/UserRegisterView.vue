@@ -1,5 +1,5 @@
 <template>
-  <LoginCard>
+  <LoginCard style="margin-bottom: 15%">
 
     <div class="container" style="margin-top: 20px">
       <form @submit.prevent="register">

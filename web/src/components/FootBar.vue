@@ -1,5 +1,5 @@
 <template>
-    <div class="container-fluid bg-dark">
+    <div class="container bg-dark">
       <div class="row">
         <div class="col">
           <a class="myInfo">联系作者</a>
@@ -31,4 +31,5 @@
   cursor: pointer;
   text-decoration: none;
 }
+
 </style>

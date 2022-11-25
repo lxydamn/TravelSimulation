@@ -1,5 +1,5 @@
 <template>
-  <LoginCard v-if="!$store.state.user.pulling_info">
+  <LoginCard v-if="!$store.state.user.pulling_info" style="margin-bottom: 15%">
 
     <div class="container" style="margin-top: 20px">
 
