@@ -10,24 +10,23 @@
   "dependencies": {
     "@amap/amap-jsapi-loader": "^1.0.1",
     "@popperjs/core": "^2.11.6",
-    "bootstrap": "^5.2.2",
-    "core-js": "^3.6.5",
+    "bootstrap": "^5.2.3",
+    "core-js": "^3.8.3",
     "jquery": "^3.6.1",
-    "naive-ui": "^2.34.2",
-    "vue": "^3.0.0",
-    "vue-router": "^4.0.0-0",
-    "vuex": "^4.0.0-0"
+    "vue": "^3.2.13",
+    "vue-router": "^4.0.3",
+    "vuex": "^4.0.0"
   },
   "devDependencies": {
-    "@vue/cli-plugin-babel": "~4.5.19",
-    "@vue/cli-plugin-eslint": "~4.5.19",
-    "@vue/cli-plugin-router": "~4.5.19",
-    "@vue/cli-plugin-vuex": "~4.5.19",
-    "@vue/cli-service": "~4.5.19",
-    "@vue/compiler-sfc": "^3.0.0",
-    "babel-eslint": "^10.1.0",
-    "eslint": "^6.7.2",
-    "eslint-plugin-vue": "^7.0.0"
+    "@babel/core": "^7.12.16",
+    "@babel/eslint-parser": "^7.12.16",
+    "@vue/cli-plugin-babel": "~5.0.0",
+    "@vue/cli-plugin-eslint": "~5.0.0",
+    "@vue/cli-plugin-router": "~5.0.0",
+    "@vue/cli-plugin-vuex": "~5.0.0",
+    "@vue/cli-service": "~5.0.0",
+    "eslint": "^7.32.0",
+    "eslint-plugin-vue": "^8.0.3"
   },
   "eslintConfig": {
     "root": true,
@@ -39,13 +38,14 @@
       "eslint:recommended"
     ],
     "parserOptions": {
-      "parser": "babel-eslint"
+      "parser": "@babel/eslint-parser"
     },
     "rules": {}
   },
   "browserslist": [
     "> 1%",
     "last 2 versions",
-    "not dead"
+    "not dead",
+    "not ie 11"
   ]
 }
