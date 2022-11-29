@@ -1,0 +1,11 @@
+.el-icon-plane{
+    background-image: url('../img/plane.png') center no-repeat;
+    background-size: 100% 100%;
+    width: 20px;
+    height: 20px;
+}
+
+[class*=" el-icon-lx"],
+[class^=el-icon-lx] {
+    font-family: lx-iconfont !important;
+}
