@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+
 @Configuration
 public class CorsConfig implements Filter {
     @Override
@@ -15,12 +16,12 @@ public class CorsConfig implements Filter {
         HttpServletRequest request = (HttpServletRequest) req;
 
         String origin = request.getHeader("Origin");
+
         if(origin!=null) {
             response.setHeader("Access-Control-Allow-Origin", origin);
         }
-
         String headers = request.getHeader("Access-Control-Request-Headers");
-        if(headers!=null) {
+        if(headers != null) {
             response.setHeader("Access-Control-Allow-Headers", headers);
             response.setHeader("Access-Control-Expose-Headers", headers);
         }
