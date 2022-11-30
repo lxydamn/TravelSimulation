@@ -10,10 +10,11 @@
   "dependencies": {
     "@amap/amap-jsapi-loader": "^1.0.1",
     "@popperjs/core": "^2.11.6",
+    "axios": "^1.2.0",
     "bootstrap": "^5.2.3",
     "core-js": "^3.8.3",
+    "element-plus": "^2.2.25",
     "jquery": "^3.6.1",
-    "v-calendar": "^2.4.1",
     "vue": "^3.2.13",
     "vue-router": "^4.0.3",
     "vuex": "^4.0.0"
