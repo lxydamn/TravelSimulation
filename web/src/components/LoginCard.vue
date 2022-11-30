@@ -2,7 +2,7 @@
   <div class="container">
     <div class="card">
       <div class="card-header">
-        <img src="@/assets/logo.png" alt="图片加载失败">
+        <img src="@/assets/images/logo.png" alt="图片加载失败">
       </div>
       <div class="card-body">
         <slot></slot>
