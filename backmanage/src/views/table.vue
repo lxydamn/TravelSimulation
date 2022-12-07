@@ -1,56 +1,51 @@
 <template>
 	<div>
 		<div class="container">
-			<div class="handle-box">
-				<el-select v-model="query.address" placeholder="地址" class="handle-select mr10">
-					<el-option key="1" label="广东省" value="广东省"></el-option>
-					<el-option key="2" label="湖南省" value="湖南省"></el-option>
-				</el-select>
-				<el-input v-model="query.name" placeholder="用户名" class="handle-input mr10"></el-input>
-				<el-button type="primary" :icon="Search" @click="handleSearch">搜索</el-button>
-			</div>
-			<el-table :data="tableData" border class="table" ref="multipleTable" header-cell-class-name="table-header">
-				<el-table-column prop="id" label="ID" width="100" align="center"></el-table-column>
-				<el-table-column prop="name" label="用户名"></el-table-column>
 
-				<el-table-column prop="date" label="注册时间"></el-table-column>
+			<el-table :data="tableData" border class="table" ref="multipleTable" header-cell-class-name="table-header">
+				<el-table-column prop="cityAdcode" label="城市Adcode" width="150" align="center"></el-table-column>
+				<el-table-column prop="cityName" label="城市名称" align="center"></el-table-column>
+				<el-table-column prop="grade" label="风险等级" align="center"></el-table-column>
 				<el-table-column label="操作" width="220" align="center">
 					<template #default="scope">
 						<el-button text :icon="Edit" @click="handleEdit(scope.$index, scope.row)">
-							编辑
-						</el-button>
-						<el-button text :icon="Delete" class="red" @click="handleDelete(scope.$index)">
-							删除
+							修改
 						</el-button>
 					</template>
 				</el-table-column>
 			</el-table>
-			<div class="pagination">
-				<el-pagination
-					background
-					layout="total, prev, pager, next"
-					:current-page="query.pageIndex"
-					:page-size="query.pageSize"
-					:total="pageTotal"
-					@current-change="handlePageChange"
-				></el-pagination>
-			</div>
 		</div>
 
 		<!-- 编辑弹出框 -->
-		<el-dialog title="编辑" v-model="editVisible" width="30%">
+		<el-dialog title="修改城市风险等级" v-model="visible" width="27%">
 			<el-form label-width="70px">
-				<el-form-item label="用户名">
-					<el-input v-model="form.name"></el-input>
+				<el-form-item label="城市名">
+					<el-input v-model="form.city_name" disabled style="width: 250px"></el-input>
 				</el-form-item>
-				<el-form-item label="地址">
-					<el-input v-model="form.address"></el-input>
+				<el-form-item label="风险等级">
+          <el-select v-model="form.city_grade" placeholder="Select" style="width: 250px">
+            <el-option
+                v-for="item in options"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+            />
+          </el-select>
 				</el-form-item>
 			</el-form>
 			<template #footer>
-				<span class="dialog-footer">
-					<el-button @click="editVisible = false">取 消</el-button>
-					<el-button type="primary" @click="saveEdit">确 定</el-button>
+				<span>
+          <el-row>
+            <el-col :span="12">
+              <el-button @click="visible = false" style="width: 130px">取 消</el-button>
+            </el-col>
+            <el-col :span="12">
+              <el-button type="primary" @click="modifyGrade" style="width: 130px;">确 定</el-button>
+            </el-col>
+
+          </el-row>
+
+
 				</span>
 			</template>
 		</el-dialog>
@@ -59,104 +54,88 @@
 
 <script setup lang="ts" name="basetable">
 import { ref, reactive } from 'vue';
-import { ElMessage, ElMessageBox } from 'element-plus';
+import { ElMessage } from 'element-plus';
 import { Delete, Edit, Search} from '@element-plus/icons-vue';
-import { fetchData } from '../api/index';
+import axios from "axios";
 
 interface TableItem {
-	id: number;
-	name: string;
-	money: string;
-	state: string;
-	date: string;
-	address: string;
+	cityAdcode: number;
+	cityName: string;
+	provinceName: string;
+  provinceAdcode:number;
+  grade:string;
 }
 
-const query = reactive({
-	address: '',
-	name: '',
-	pageIndex: 1,
-	pageSize: 10
-});
+let visible = ref(false);
 const tableData = ref<TableItem[]>([]);
-const pageTotal = ref(0);
-
 // 获取表格数据
 const getData = () => {
-	fetchData().then(res => {
-		tableData.value = res.data.list;
-		pageTotal.value = res.data.pageTotal || 50;
-	});
+	axios({
+    url: "http://localhost:3000/api/back/getcities/",
+    method: "GET",
+    headers: {
+      Authorization: "Bearer " + localStorage.getItem("jwt_token"),
+    },
+  }).then((resp) => {
+      tableData.value = resp.data;
+      for(let i = 0; i < tableData.value.length; i ++) {
+          tableData.value[i].grade = toGrade[resp.data[i].grade];
+      }
+  })
+
 };
 
+const toGrade = ['低风险','中风险', '高风险'];
 getData();
+// 风险地选择器
+const options = [
+  {
+    value: 0,
+    label:'低风险',
+  },{
+    value: 1,
+    label: '中风险',
+  },{
+    value: 2,
+    label: '高风险',
+  }
+]
 
-// 查询操作
-const handleSearch = () => {
-	query.pageIndex = 1;
-	getData();
-};
-// 分页导航
-const handlePageChange = (val: number) => {
-	query.pageIndex = val;
-	getData();
-};
+// 修改风险等级
+const modifyGrade = () => {
+  visible.value = false;
+  ElMessage({
+    message:'修改成功',
+    type:'success',
+  })
+}
 
-// 删除操作
-const handleDelete = (index: number) => {
-	// 二次确认删除
-  ElMessageBox.confirm('确定要删除吗？', '提示', {
-    type: 'warning'
-  }).then(() => {
-    ElMessage.success();
-    tableData.value.splice(index, 1);
-  }).catch(() => {});
-};
-
-// 表格编辑时弹窗和保存
-const editVisible = ref(false);
 
 let form = reactive({
-	name: '',
-	address: ''
+	city_name: '',
+	city_grade: '',
 });
 
 let idx: number = -1;
 
 const handleEdit = (index: number, row: any) => {
+  visible.value = true;
 	idx = index;
-	form.name = row.name;
-	form.address = row.address;
-	editVisible.value = true;
+	form.city_name = row.cityName;
+	form.city_grade = row.grade;
 };
+
 const saveEdit = () => {
-	editVisible.value = false;
 	ElMessage.success();
-	tableData.value[idx].name = form.name;
-	tableData.value[idx].address = form.address;
 };
+
 </script>
 
 <style scoped>
-  .handle-box {
-    margin-bottom: 20px;
-  }
 
-.handle-select {
-	width: 120px;
-}
-
-.handle-input {
-	width: 300px;
-}
 .table {
 	width: 100%;
 	font-size: 14px;
 }
-.red {
-	color: #ff0000;
-}
-.mr10 {
-	margin-right: 10px;
-}
+
 </style>

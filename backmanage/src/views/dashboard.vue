@@ -1,4 +1,4 @@
-<template>
+<template v-show="user.is_login">
 	<div>
 		<el-row :gutter="20">
 			<el-col :span="8">

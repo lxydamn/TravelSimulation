@@ -1,4 +1,4 @@
-<template>
+<template v-show="store.is_login">
 	<div class="header">
 		<div class="logo">Travel Simulation 后台管理</div>
 		<div class="header-right">
