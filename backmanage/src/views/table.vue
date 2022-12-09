@@ -42,10 +42,7 @@
             <el-col :span="12">
               <el-button type="primary" @click="modifyGrade" style="width: 130px;">确 定</el-button>
             </el-col>
-
           </el-row>
-
-
 				</span>
 			</template>
 		</el-dialog>
@@ -104,6 +101,26 @@ const options = [
 // 修改风险等级
 const modifyGrade = () => {
   visible.value = false;
+
+
+  axios({
+    url:"http://localhost:3000/api/back/modifycity/",
+    method:"POST",
+    headers: {
+      Authorization: "Bearer " + localStorage.getItem("jwt_token"),
+    },
+    params:{
+      adcode:form.city_adcode,
+      grade:form.city_grade,
+    },
+  });
+  // 表中显示修改
+  for(let city of tableData.value) {
+    if(city.cityAdcode === parseInt(form.city_adcode)) {
+      city.grade = toGrade[parseInt(form.city_grade)];
+    }
+  }
+
   ElMessage({
     message:'修改成功',
     type:'success',
@@ -114,6 +131,7 @@ const modifyGrade = () => {
 let form = reactive({
 	city_name: '',
 	city_grade: '',
+  city_adcode:'',
 });
 
 let idx: number = -1;
@@ -123,6 +141,7 @@ const handleEdit = (index: number, row: any) => {
 	idx = index;
 	form.city_name = row.cityName;
 	form.city_grade = row.grade;
+  form.city_adcode = row.cityAdcode;
 };
 
 const saveEdit = () => {
