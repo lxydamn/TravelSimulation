@@ -1,13 +1,11 @@
-package com.backend.service.impl.backmanage;
+package com.backend.service.impl.backmanage.city;
 
 import com.backend.mapper.UserMapper;
 import com.backend.pojo.User;
-import com.backend.service.backmanage.GetUsersService;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.backend.service.backmanage.city.GetUsersService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service

@@ -10,7 +10,9 @@
 	"dependencies": {
 		"@element-plus/icons-vue": "^2.0.9",
 		"axios": "^0.27.2",
+		"element-china-area-data": "^5.0.2",
 		"element-plus": "^2.2.14",
+		"elui-china-area-dht": "^2.0.0",
 		"jquery": "^3.6.1",
 		"md-editor-v3": "^2.2.1",
 		"pinia": "^2.0.20",

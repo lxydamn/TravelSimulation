@@ -24,6 +24,10 @@ grade 疫情等级
 
 完成修改城市风险等级
 
-
-
 新增api ` api/back/modifycity 修改城市疫情风险等级`
+
+## 后台管理推进 12-10
+
+完成添加城市
+
+新增api ` api/back/addcity 添加城市`

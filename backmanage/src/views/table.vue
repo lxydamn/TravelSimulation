@@ -2,7 +2,20 @@
 	<div>
 		<div class="container">
 
-			<el-table :data="tableData" border class="table" ref="multipleTable" header-cell-class-name="table-header">
+      <el-button
+          class="m-2"
+          @click="popVisible = !popVisible"
+          style="float: right;margin-bottom: 10px"
+      >添加城市</el-button>
+
+			<el-table
+          :data="tableData"
+          :cell-style="renderCell"
+          border class="table"
+          ref="multipleTable"
+          header-cell-class-name="table-header"
+          style="height:500px;"
+      >
 				<el-table-column prop="cityAdcode" label="城市Adcode" width="150" align="center"></el-table-column>
 				<el-table-column prop="cityName" label="城市名称" align="center"></el-table-column>
 				<el-table-column prop="grade" label="风险等级" align="center"></el-table-column>
@@ -15,6 +28,37 @@
 				</el-table-column>
 			</el-table>
 		</div>
+
+
+<!--    添加城市框-->
+    <el-dialog v-model="popVisible" title="添加城市" width="600">
+      <el-form >
+        <el-row :gutter="30">
+          <el-col :span="12">
+            <elui-china-area-dht v-model="added_city.city_adcode" :leave="2"></elui-china-area-dht>
+          </el-col>
+          <el-col :span="12">
+            <el-select v-model="added_city.city_grade" placeholder="Select" style="width: 250px">
+              <el-option
+                  v-for="item in options"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+              />
+            </el-select>
+          </el-col>
+        </el-row>
+      </el-form>
+      <template #footer>
+      <span class="dialog-footer">
+        <el-button @click="popVisible = false">取消</el-button>
+        <el-button type="primary" @click="addCity">
+          确认添加
+        </el-button>
+      </span>
+      </template>
+    </el-dialog>
+
 
 		<!-- 编辑弹出框 -->
 		<el-dialog title="修改城市风险等级" v-model="visible" width="27%">
@@ -52,8 +96,10 @@
 <script setup lang="ts" name="basetable">
 import { ref, reactive } from 'vue';
 import { ElMessage } from 'element-plus';
-import { Delete, Edit, Search} from '@element-plus/icons-vue';
+import {Edit} from '@element-plus/icons-vue';
 import axios from "axios";
+import {EluiChinaAreaDht} from "elui-china-area-dht";
+const chinaData = new EluiChinaAreaDht.ChinaArea().chinaAreaflat;
 
 interface TableItem {
 	cityAdcode: number;
@@ -63,26 +109,102 @@ interface TableItem {
   grade:string;
 }
 
+let popVisible = ref(false);
 let visible = ref(false);
-const tableData = ref<TableItem[]>([]);
+
+let added_city = reactive({
+  city_adcode: '',
+  city_grade: '低风险',
+});
+
+let form = reactive({
+  city_name: '',
+  city_grade: '',
+  city_adcode:'',
+});
+
+let idx: number = -1;
 // 获取表格数据
-const getData = () => {
-	axios({
+const tableData = ref<TableItem[]>([]), getData = () => {
+  axios({
     url: "http://localhost:3000/api/back/getcities/",
     method: "GET",
     headers: {
       Authorization: "Bearer " + localStorage.getItem("jwt_token"),
     },
   }).then((resp) => {
-      tableData.value = resp.data;
-      for(let i = 0; i < tableData.value.length; i ++) {
-          tableData.value[i].grade = toGrade[resp.data[i].grade];
-      }
+    tableData.value = resp.data;
+    for (let i = 0; i < tableData.value.length; i++) {
+      tableData.value[i].grade = toGrade[resp.data[i].grade];
+    }
   })
 
 };
 
-const toGrade = ['低风险','中风险', '高风险'];
+const addCity = () => {
+
+  popVisible.value = false;
+
+
+  let name = chinaData[added_city.city_adcode[1]].label;
+  let grade = added_city.city_adcode;
+
+
+  if(grade === '低风险') grade = "0";
+  else if(grade === '中风险') grade = "1";
+  else grade = "2";
+
+
+
+   axios({
+    url:"http://localhost:3000/api/back/addcity/",
+    method:"POST",
+    headers: {
+      Authorization: "Bearer " + localStorage.getItem("jwt_token"),
+    },
+    params: {
+      adcode:added_city.city_adcode[1],
+      name:name,
+      grade: grade,
+    }
+  }).then((resp) => {
+    if(resp.data.error_message != "success") {
+      ElMessage({
+        showClose:true,
+        message: "添加失败！重复添加",
+        type: "success",
+      });
+    } else {
+      ElMessage({
+        showClose:true,
+        message: "添加成功",
+        type: "success",
+      });
+    }
+  })
+
+
+
+}
+
+const renderCell = (row : any) => {
+
+  if (row.row.grade === '中风险' && row.columnIndex === 2) {
+
+    return {
+      color:'#f86a6f',
+    };
+  } else if (row.row.grade === '高风险' && row.columnIndex === 2) {
+
+    return {
+      color:'#ff0000',
+    };
+  }
+};
+
+const toGrade = ['低风险', '中风险', '高风险'];
+
+
 getData();
 // 风险地选择器
 const options = [
@@ -128,13 +250,6 @@ const modifyGrade = () => {
 }
 
 
-let form = reactive({
-	city_name: '',
-	city_grade: '',
-  city_adcode:'',
-});
-
-let idx: number = -1;
 
 const handleEdit = (index: number, row: any) => {
   visible.value = true;
@@ -144,9 +259,6 @@ const handleEdit = (index: number, row: any) => {
   form.city_adcode = row.cityAdcode;
 };
 
-const saveEdit = () => {
-	ElMessage.success();
-};
 
 </script>
 

@@ -5,6 +5,7 @@ export const useDataStore = defineStore('data', {
     state:() => {
        return{
            user:"",
+           cities:"",
        }
     }
 })

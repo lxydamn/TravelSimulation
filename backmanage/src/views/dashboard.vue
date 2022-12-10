@@ -68,8 +68,8 @@
           <div class="grid-content grid-con-1">
             <el-icon class="grid-con-icon"><User /></el-icon>
             <div class="grid-cont-right">
-              <div class="grid-num">{{data.user.length}}</div>
-              <div>疫情城市数量</div>
+              <div class="grid-num">{{data.cities.length}}</div>
+              <div>城市数量</div>
             </div>
           </div>
         </el-card>
@@ -87,6 +87,7 @@ const user = useUserStore();
 const data = useDataStore();
 
 const init = () => {
+  // 请求users
   axios({
     url:"http://localhost:3000/api/back/users/",
     method:"GET",
@@ -95,6 +96,16 @@ const init = () => {
     },
   }).then((res) => {
     data.user = res.data;
+  })
+  // 请求城市
+  axios({
+    url:"http://localhost:3000/api/back/getcities/",
+    method:"GET",
+    headers: {
+      Authorization: "Bearer " + localStorage.getItem("jwt_token"),
+    },
+  }).then((resp) => {
+    data.cities = resp.data;
   })
 }
 

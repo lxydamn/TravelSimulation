@@ -1,7 +1,7 @@
-package com.backend.controller.backmanage;
+package com.backend.controller.backmanage.city;
 
 import com.backend.pojo.User;
-import com.backend.service.backmanage.GetUsersService;
+import com.backend.service.backmanage.city.GetUsersService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
