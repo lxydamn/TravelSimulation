@@ -18,8 +18,6 @@ public class AddCityController {
     @PostMapping("api/back/addcity")
     public Map<String, String> addCity(@RequestParam Map<String, String> map) {
 
-        System.out.println(map);
-
         Integer adcode = Integer.parseInt(map.get("adcode"));
         String name = map.get("name");
         Integer grade = Integer.parseInt(map.get("grade"));

@@ -31,3 +31,11 @@ grade 疫情等级
 完成添加城市
 
 新增api ` api/back/addcity 添加城市`
+
+
+
+## 后台管理推进 12-12
+
+完成删除城市
+
+新增api `api/back/deletecity 删除城市`

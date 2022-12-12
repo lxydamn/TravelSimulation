@@ -24,10 +24,16 @@
 						<el-button text :icon="Edit" @click="handleEdit(scope.$index, scope.row)">
 							修改
 						</el-button>
+            <el-button text :icon="Delete" @click="handleDelete(scope.$index, scope.row)">
+              删除
+            </el-button>
 					</template>
 				</el-table-column>
 			</el-table>
 		</div>
+<!--    删除确认框-->
+
+
 
 
 <!--    添加城市框-->
@@ -95,8 +101,8 @@
 
 <script setup lang="ts" name="basetable">
 import { ref, reactive } from 'vue';
-import { ElMessage } from 'element-plus';
-import {Edit} from '@element-plus/icons-vue';
+import { ElMessage,ElMessageBox  } from 'element-plus';
+import {Edit, Delete} from '@element-plus/icons-vue';
 import axios from "axios";
 import {EluiChinaAreaDht} from "elui-china-area-dht";
 const chinaData = new EluiChinaAreaDht.ChinaArea().chinaAreaflat;
@@ -125,7 +131,9 @@ let form = reactive({
 
 let idx: number = -1;
 // 获取表格数据
-const tableData = ref<TableItem[]>([]), getData = () => {
+const tableData = ref<TableItem[]>([]);
+
+const getData = () => {
   axios({
     url: "http://localhost:3000/api/back/getcities/",
     method: "GET",
@@ -141,6 +149,53 @@ const tableData = ref<TableItem[]>([]), getData = () => {
 
 };
 
+const handleDelete = (index:number, row:any) => {
+  ElMessageBox.confirm(
+      '你确认要删除吗？',
+      'warning',
+      {
+        confirmButtonText:'确认',
+        cancelButtonText:'取消',
+        type:'warning',
+      }
+  ).then(() => {
+      let adcode = row.cityAdcode;
+
+      axios({
+        url:'http://localhost:3000/api/back/deletecity/',
+        method:"POST",
+        headers: {
+          Authorization: "Bearer " + localStorage.getItem("jwt_token"),
+        },
+        params:{
+          adcode:adcode,
+        },
+      }).then((resp) => {
+        if(resp.data.error_message === 'success') {
+          ElMessage({
+            type:'success',
+            message:'删除成功',
+          });
+
+          getData();
+        } else {
+          ElMessage({
+            type:'error',
+            message:'删除失败',
+          });
+        }
+      });
+
+  }).catch(() => {
+    ElMessage({
+      type: 'info',
+      message: '取消删除',
+    })
+  })
+
+
+}
+
 const addCity = () => {
 
   popVisible.value = false;
@@ -153,8 +208,6 @@ const addCity = () => {
   if(grade === '低风险') grade = "0";
   else if(grade === '中风险') grade = "1";
   else grade = "2";
-
-
 
    axios({
     url:"http://localhost:3000/api/back/addcity/",
@@ -172,7 +225,7 @@ const addCity = () => {
       ElMessage({
         showClose:true,
         message: "添加失败！重复添加",
-        type: "success",
+        type: "error",
       });
     } else {
       ElMessage({
@@ -180,12 +233,12 @@ const addCity = () => {
         message: "添加成功",
         type: "success",
       });
+
+      getData();
     }
   })
 
-
-
-}
+};
 
 const renderCell = (row : any) => {
 
@@ -202,11 +255,11 @@ const renderCell = (row : any) => {
   }
 };
 
-const toGrade = ['低风险', '中风险', '高风险'];
-
 
 getData();
-// 风险地选择器
+
+
+const toGrade = ['低风险', '中风险', '高风险'];
 const options = [
   {
     value: 0,
