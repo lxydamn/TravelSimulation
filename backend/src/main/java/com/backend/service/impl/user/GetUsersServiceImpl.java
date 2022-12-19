@@ -1,8 +1,8 @@
-package com.backend.service.impl.backmanage.city;
+package com.backend.service.impl.user;
 
 import com.backend.mapper.UserMapper;
 import com.backend.pojo.User;
-import com.backend.service.backmanage.city.GetUsersService;
+import com.backend.service.backmanage.user.GetUsersService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

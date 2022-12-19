@@ -1,4 +1,4 @@
-package com.backend.service.backmanage.city;
+package com.backend.service.backmanage.user;
 
 import com.backend.pojo.User;
 

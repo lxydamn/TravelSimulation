@@ -104,10 +104,13 @@ const submitForm = (formEl: FormInstance | undefined) => {
 				type: 'error',
 			})
 		}
-
-		
-	})
-
+	}).catch((resp) => {
+    ElMessage({
+      showClose: true,
+      message: "登录失败！获取用户数据失败",
+      type: 'error',
+    })
+  })
   }
 
 };
@@ -130,9 +133,6 @@ const getinfo = () => {
       		is_login: true,
 		})
     	router.push('/dashboard');
-	}).catch((res) => {
-		console.log(user.getToken);
-		console.log(localStorage.getItem("jwt_token"));
 	})
 }
 
@@ -147,7 +147,7 @@ tags.clearTags();
 	position: relative;
 	width: 100%;
 	height: 100%;
-	background-image: url(../assets/img/login-bg.jpg);
+	background-image: url(../assets/img/login-bg.png);
 	background-size: 100%;
 }
 .ms-title {

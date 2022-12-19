@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia';
+import axios from "axios";
 
 export let useUserStore = defineStore('user', {
     persist:true,
@@ -36,7 +37,6 @@ export let useUserStore = defineStore('user', {
            localStorage.removeItem("is_login");
            localStorage.removeItem("jwt_token");
        },
-
    
     }
 })
