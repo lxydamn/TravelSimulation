@@ -99,7 +99,7 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
-    if(to.meta.author && !localStorage.getItem("is_login")) {
+    if(to.meta.author && !sessionStorage.getItem("is_login")) {
         next({name:"Login"});
     } else {
         next();

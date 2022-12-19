@@ -6,6 +6,9 @@ export const useDataStore = defineStore('data', {
        return{
            user:"",
            cities:"",
+           car:"",
+           plane:"",
+           train:"",
        }
     }
 })

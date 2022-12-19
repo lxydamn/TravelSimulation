@@ -5,26 +5,26 @@
 ### user
 
 ```
-/api/user/token/ 
-/api/user/register/
-/api/user/info/
-
+/api/user/token/  post
+/api/user/register/ post
+/api/user/info/ get
 ```
 
 ### back
 
 ```
-/api/back/users/
+/api/back/users/ get
 
-/api/back/addcity/
-/api/back/getcities/
-/api/back/deletecity/
+/api/back/addcity/ post
+/api/back/getcities/ get
+/api/back/deletecity/ post
 
 
-/api/back/addpath/
+/api/back/addpath/ post
+/api/back/getpaths/ get
+/api/back/deletepath/ post
+/api/back/modifypath/ post
 ```
-
-
 
 ## 数据库
 
@@ -39,8 +39,6 @@ create table travelsimulation.user
     password varchar(5000) not null,
     photo    varchar(1000) not null
 );
-
-
 ```
 
 ### city
@@ -55,8 +53,6 @@ create table travelsimulation.city
     constraint city_adcode
         unique (city_adcode)
 );
-
-
 ```
 
 #### city数据
@@ -112,8 +108,6 @@ create table travelsimulation.plan
     constraint id
         unique (id)
 );
-
-
 ```
 
 #### path
@@ -132,6 +126,4 @@ create table travelsimulation.path
     constraint id
         unique (id)
 );
-
-
 ```

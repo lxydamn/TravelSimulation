@@ -31,7 +31,6 @@ let query = reactive({
   pageTotal:0,
 })
 
-let searchName = ref('');
 let tableData = ref([]);
 let users = ref([]);
 
@@ -40,7 +39,7 @@ const init = () => {
       url:"http://localhost:3000/api/back/users/",
       method:"GET",
       headers: {
-        Authorization: "Bearer " + localStorage.getItem("jwt_token"),
+        Authorization: "Bearer " + sessionStorage.getItem("jwt_token"),
       },
     }).then((res) => {
       users.value = res.data;

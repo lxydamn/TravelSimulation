@@ -47,21 +47,21 @@
           <div class="grid-content grid-con-2">
             <el-icon class="grid-con-icon"><User /></el-icon>
             <div class="grid-cont-right">
-              <div class="grid-num">{{data.user.length}}</div>
+              <div class="grid-num">{{data.plane.length}}</div>
               <div>飞机航线</div>
             </div>
           </div>
           <div class="grid-content grid-con-3">
             <el-icon class="grid-con-icon"><User /></el-icon>
             <div class="grid-cont-right">
-              <div class="grid-num">{{data.user.length}}</div>
+              <div class="grid-num">{{data.train.length}}</div>
               <div>火车路线</div>
             </div>
           </div>
           <div class="grid-content grid-con-2">
             <el-icon class="grid-con-icon"><User /></el-icon>
             <div class="grid-cont-right">
-              <div class="grid-num">{{data.user.length}}</div>
+              <div class="grid-num">{{data.car.length}}</div>
               <div>汽车路线</div>
             </div>
           </div>
@@ -92,7 +92,7 @@ const init = () => {
     url:"http://localhost:3000/api/back/users/",
     method:"GET",
     headers: {
-      Authorization: "Bearer " + localStorage.getItem("jwt_token"),
+      Authorization: "Bearer " + sessionStorage.getItem("jwt_token"),
     },
   }).then((res) => {
     data.user = res.data;
@@ -102,10 +102,23 @@ const init = () => {
     url:"http://localhost:3000/api/back/getcities/",
     method:"GET",
     headers: {
-      Authorization: "Bearer " + localStorage.getItem("jwt_token"),
+      Authorization: "Bearer " + sessionStorage.getItem("jwt_token"),
     },
   }).then((resp) => {
     data.cities = resp.data;
+  })
+
+  // 请求路线
+  axios({
+    url:"http://localhost:3000/api/back/getpaths/",
+    method:"GET",
+    headers: {
+      Authorization: "Bearer " + sessionStorage.getItem("jwt_token"),
+    },
+  }).then((resp) => {
+    data.car = resp.data.car;
+    data.train = resp.data.train;
+    data.plane = resp.data.plane;
   })
 }
 

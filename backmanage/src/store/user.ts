@@ -34,8 +34,8 @@ export let useUserStore = defineStore('user', {
            this.photo = "";
            this.token = "";
            this.is_login = false;
-           localStorage.removeItem("is_login");
-           localStorage.removeItem("jwt_token");
+           sessionStorage.removeItem("is_login");
+           sessionStorage.removeItem("jwt_token");
        },
    
     }

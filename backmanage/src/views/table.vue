@@ -138,7 +138,7 @@ const getData = () => {
     url: "http://localhost:3000/api/back/getcities/",
     method: "GET",
     headers: {
-      Authorization: "Bearer " + localStorage.getItem("jwt_token"),
+      Authorization: "Bearer " + sessionStorage.getItem("jwt_token"),
     },
   }).then((resp) => {
     tableData.value = resp.data;
@@ -165,7 +165,7 @@ const handleDelete = (index:number, row:any) => {
         url:'http://localhost:3000/api/back/deletecity/',
         method:"POST",
         headers: {
-          Authorization: "Bearer " + localStorage.getItem("jwt_token"),
+          Authorization: "Bearer " + sessionStorage.getItem("jwt_token"),
         },
         params:{
           adcode:adcode,
@@ -213,7 +213,7 @@ const addCity = () => {
     url:"http://localhost:3000/api/back/addcity/",
     method:"POST",
     headers: {
-      Authorization: "Bearer " + localStorage.getItem("jwt_token"),
+      Authorization: "Bearer " + sessionStorage.getItem("jwt_token"),
     },
     params: {
       adcode:added_city.city_adcode[1],
@@ -282,7 +282,7 @@ const modifyGrade = () => {
     url:"http://localhost:3000/api/back/modifycity/",
     method:"POST",
     headers: {
-      Authorization: "Bearer " + localStorage.getItem("jwt_token"),
+      Authorization: "Bearer " + sessionStorage.getItem("jwt_token"),
     },
     params:{
       adcode:form.city_adcode,

@@ -67,7 +67,7 @@ const login = ref<FormInstance>();
 
 const submitForm = (formEl: FormInstance | undefined) => {
 
-  const jwt_token = localStorage.getItem("jwt_token");
+  const jwt_token = sessionStorage.getItem("jwt_token");
 
   if(jwt_token) {
 	// 直接请求信息
@@ -85,7 +85,7 @@ const submitForm = (formEl: FormInstance | undefined) => {
         }       
 	}).then((res) => {
 		if(res.data.error_message === 'success') {
-			localStorage.setItem("jwt_token", res.data.token);
+      sessionStorage.setItem("jwt_token", res.data.token);
 			user.$patch({
 				token : res.data.token,
 			})
@@ -122,10 +122,10 @@ const getinfo = () => {
 		url: "http://localhost:3000/api/user/info/",
 		method:"get",
 		headers:{
-			Authorization: "Bearer " + localStorage.getItem("jwt_token"),
+			Authorization: "Bearer " + sessionStorage.getItem("jwt_token"),
 		}
 	}).then((res) => {
-    localStorage.setItem("is_login", "true");
+    sessionStorage.setItem("is_login", "true");
 		user.$patch({
 			id : res.data.id,
 			username :res.data.username,

@@ -40,7 +40,7 @@ const router = useRouter();
 const handleCommand = (command: string) => {
 	if (command == 'loginout') {
 		store.logout();
-		localStorage.removeItem('is_login');
+    sessionStorage.removeItem('is_login');
 		router.push('/login');
 	} else if (command == 'user') {
 		router.push('/user');
