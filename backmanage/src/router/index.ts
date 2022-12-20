@@ -27,14 +27,6 @@ const routes:RouteRecordRaw[] = [
                 },
                 component: () => import ( /* webpackChunkName: "dashboard" */ "../views/userslist.vue")
             },{
-                path: "/travel",
-                name: 'travel',
-                meta: {
-                    title: '交通路线',
-                    author: true,
-                },
-                component:() => import(/* webpackChunkName: "travel" */ "../views/travel/travel.vue")
-            },{
                 path: "/car",
                 name: 'car',
                 meta: {

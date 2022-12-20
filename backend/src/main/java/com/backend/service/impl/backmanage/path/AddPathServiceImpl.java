@@ -38,6 +38,7 @@ public class AddPathServiceImpl implements AddPathService {
         Date st = new Date(startTime);
         Date ed = new Date(endTime);
         Path p = new Path(null,startCity, endCity, st, ed , cost, type);
+        pathMapper.insert(p);
 
         resp.put("error_message", "success");
         return resp;

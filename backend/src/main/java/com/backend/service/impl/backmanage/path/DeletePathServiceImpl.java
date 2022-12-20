@@ -17,19 +17,20 @@ public class DeletePathServiceImpl implements DeletePathService {
     @Autowired
     private PathMapper pathMapper;
     @Override
-    public Map<String, String> deletePath(Integer id) {
+    public Map<String, String> deletePath(Map<String, String> map) {
 
         QueryWrapper<Path> queryWrapper = new QueryWrapper<>();
         Map<String, String> resp = new HashMap<>();
 
         try {
+            Integer id = Integer.parseInt(map.get("id"));
             pathMapper.deleteById(id);
         } catch (Exception e) {
-            resp.put("error_message", "路径不存在");
+            resp.put("error_message", "参数错误或路径不存在");
             return resp;
         }
 
-        resp.put("err_or_message", "success");
+        resp.put("error_message", "success");
         return resp;
 
     }
