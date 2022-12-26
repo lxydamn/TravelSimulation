@@ -1,19 +1,19 @@
 <template>
-  <div class="card">
+  <el-card class="box-card">
     <div id="container">
-
     </div>
-  </div>
+  </el-card>
 
 </template>
 
 <script>
 import AMapLoader from '@amap/amap-jsapi-loader';
 import { shallowRef } from '@vue/reactivity';
-import { onMounted } from 'vue'
+import { onMounted } from 'vue';
 
 export default {
   setup() {
+
     let map = shallowRef(null);
 
     const ininMap = () => {
