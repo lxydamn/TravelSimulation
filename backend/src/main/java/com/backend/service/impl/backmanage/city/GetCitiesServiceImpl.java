@@ -10,7 +10,6 @@ import java.util.List;
 
 @Service
 public class GetCitiesServiceImpl implements GetCitiesService {
-
     @Autowired
     private CityMapper cityMapper;
     @Override

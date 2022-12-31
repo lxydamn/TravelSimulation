@@ -55,7 +55,6 @@ export default {
     const logout = () => {
       store.dispatch("logout");
     }
-
     return {
       router_name,
       logout
