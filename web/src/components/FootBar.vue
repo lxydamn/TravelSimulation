@@ -10,7 +10,7 @@
           </router-link>
         </div>
         <div class="col">
-          <a class="myInfo"> 后台管理</a>
+          <a class="myInfo" href="http://localhost:5173"> 后台管理</a>
         </div>
       </div>
     </div>

@@ -12,16 +12,12 @@ import java.util.Date;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Path {
+public class Plan {
 
+    private Integer userId;
     @TableId(type = IdType.AUTO)
     private Integer id;
-    private Integer startCity;
-    private Integer endCity;
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm",timezone = "Asia/Shanghai")
-    private Date startTime;
+    private String content;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm", timezone = "Asia/Shanghai")
-    private Date endTime;
-    private Integer cost;
-    private Integer type;
+    private Date createTime;
 }

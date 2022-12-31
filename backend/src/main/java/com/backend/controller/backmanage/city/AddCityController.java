@@ -15,7 +15,7 @@ public class AddCityController {
     @Autowired
     private AddCityService addCityService;
 
-    @PostMapping("api/back/addcity")
+    @PostMapping("api/back/addcity/")
     public Map<String, String> addCity(@RequestParam Map<String, String> map) {
 
         Integer adcode = Integer.parseInt(map.get("adcode"));

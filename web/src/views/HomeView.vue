@@ -185,8 +185,22 @@ export default {
     let valuezCity = ref([])
 
     const caul = () => {
-      console.log(valueTime);
-      console.log(num);
+
+      axios({
+        url:"http://localhost:3000/api/algorithm/dfs/",
+        method:"POST",
+        headers:{
+          Authorization: "Bearer " + localStorage.getItem("jwt_token"),
+        },
+        params:{
+          startTime:valueTime.value,
+          startCity:valueStart.value,
+          endCity:valueEnd.value,
+        }
+      }).then((resp) => {
+        console.log(resp.data);
+      })
+
       MapContainer.methods.drawpath();
     }
 

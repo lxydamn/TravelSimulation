@@ -44,7 +44,7 @@ export default {
 
     const register = () => {
 
-      console.log("test")
+
       $.ajax({
         url:"http://localhost:3000/api/user/register/",
         type:"POST",
@@ -61,7 +61,7 @@ export default {
           }
         },
         error() {
-          console.log("失败");
+
         }
       })
     }

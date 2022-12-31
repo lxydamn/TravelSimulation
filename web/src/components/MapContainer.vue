@@ -39,8 +39,8 @@ export default {
           version: "2.0.0", // Loca 版本，缺省 2.0.0
         },
       }).then((AMap) => {
-        var colors = {};
-        var GDPSpeed = {
+        const colors = {};
+        const GDPSpeed = {
           '520000': 0,//贵州
           '540000': 0,//西藏
           '530000': 0,//云南 
@@ -90,8 +90,7 @@ export default {
               var t = city.cityAdcode.toString()
               var t1 = t.substring(0, 2)
               var t2 = t1.concat("0000")
-              if(GDPSpeed[t2] < city.grade)
-              {
+              if(GDPSpeed[t2] < city.grade) {
                 GDPSpeed[t2] = city.grade
               }
             }
@@ -99,19 +98,15 @@ export default {
         }
         freshSelect();
 
-        var getColorByDGP = function (adcode) {
+        const getColorByDGP = function (adcode) {
           if (!colors[adcode]) {
-            var risk = GDPSpeed[adcode];
+            const risk = GDPSpeed[adcode];
             if (risk == 0) {
               colors[adcode] = 'rgb(227,227,227)'
             } else if (risk == 1) {
               colors[adcode] = 'rgb(245,156,179)'
             } else if (risk == 2) {
-              colors[adcode] = 'rgb(238,97,134)'
-            } else if (risk == 3) {
               colors[adcode] = 'rgb(234,57,104)'
-            } else if (risk == 4) {
-              colors[adcode] = 'rgb(117,29,52)'
             }
           }
           return colors[adcode]

@@ -49,7 +49,7 @@ export default {
       let error_message = ref('');
 
       const jwt_token = localStorage.getItem("jwt_token");
-      console.log(jwt_token);
+
       if(jwt_token) {
         store.commit("updateToken", jwt_token);
         store.dispatch("getinfo", {
