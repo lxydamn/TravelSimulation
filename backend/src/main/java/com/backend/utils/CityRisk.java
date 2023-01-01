@@ -30,8 +30,9 @@ public class CityRisk {
 
             QueryWrapper<City> queryWrapper = new QueryWrapper<>();
             queryWrapper.eq("city_adcode", adcode);
-            City c = cityRisk.cityMapper.selectOne(queryWrapper);
 
+            City c = cityRisk.cityMapper.selectOne(queryWrapper);
+            if(c == null) return 0;
             return riskValue[c.getGrade()];
     }
 }

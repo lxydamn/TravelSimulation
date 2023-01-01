@@ -96,8 +96,6 @@
 
           </el-card>
 
-
-
           <el-card class="box-card" style="margin-top: 20px; margin-left: 15px;">
             <el-card class="box-card" :body-style="{ padding: '0px' }">
               <div class="card-header" style="text-align:center">

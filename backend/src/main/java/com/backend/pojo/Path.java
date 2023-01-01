@@ -1,5 +1,6 @@
 package com.backend.pojo;
 
+import com.backend.utils.CityRisk;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -24,4 +25,6 @@ public class Path {
     private Date endTime;
     private Integer cost;
     private Integer type;
+
+
 }

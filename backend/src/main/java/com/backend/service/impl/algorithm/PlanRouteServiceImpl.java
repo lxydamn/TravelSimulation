@@ -2,13 +2,13 @@ package com.backend.service.impl.algorithm;
 
 import com.backend.mapper.PathMapper;
 import com.backend.pojo.Graph;
+import com.backend.pojo.Path;
 import com.backend.pojo.Planed;
 import com.backend.service.algorithm.PlanRouteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class PlanRouteServiceImpl implements PlanRouteService {
@@ -17,16 +17,12 @@ public class PlanRouteServiceImpl implements PlanRouteService {
     private PathMapper pathMapper;
 
     @Override
-    public Planed getDfsPlanRoute(Map<String, String> map) {
+    public Planed getDfsPlanRoute(Integer st, Integer ed, Date startTime, Integer transit, Integer weightType, Set<Integer> set) {
 
         try {
-            Integer startCity = Integer.parseInt(map.get("startCity"));
-            Integer endCity = Integer.parseInt(map.get("endCity"));
-            Date startTime = new Date(Long.parseLong(map.get("startTime")));
-
             Graph graph = new Graph(pathMapper.selectList(null), startTime);
 
-            return graph.getDfs(startCity, endCity);
+            return graph.getDfs(st, ed, set);
 
         } catch (Exception e) {
 
@@ -36,9 +32,29 @@ public class PlanRouteServiceImpl implements PlanRouteService {
     }
 
     @Override
-    public Planed getBellmanPlanRoute(Map<String, String> map) {
+    public Planed getBellmanPlanRoute(Integer st, Integer ed, Date startTime, Integer transit, Integer weightType, Set<Integer> set) {
+//        Integer st = Integer.parseInt(map.get("startCity"));
+//        Integer ed = Integer.parseInt(map.get("endCity"));
+//        Integer transit = Integer.parseInt(map.get("transit"));
+//        Integer weightType = Integer.parseInt(map.get("weightType"));
+//        Date startTime = new Date(Long.parseLong(map.get("startTime")));
+//
+//        String[] names = {"car", "train", "plane"};
+//        Set<Integer> set = new HashSet<>();
+//        for(int i = 1; i <= 3; i ++) {
+//            if(map.get(names[i - 1]).equals("true")) {
+//                set.add(i);
+//            }
+//        }
 
-        return null;
+        Graph graph = new Graph(pathMapper.selectList(null), startTime);
+        List<Path> paths = graph.bellmanFord(st, ed, transit, weightType, set);
+
+        if(paths == null) {
+            return null;
+        }
+
+        return new Planed(paths);
     }
 
 

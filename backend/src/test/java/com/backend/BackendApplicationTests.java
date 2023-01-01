@@ -1,16 +1,15 @@
 package com.backend;
 
 import com.backend.mapper.PathMapper;
-import com.backend.mapper.UserMapper;
 import com.backend.pojo.Graph;
-import com.backend.pojo.User;
-import com.backend.utils.CityRisk;
+import com.backend.pojo.Path;
+import com.backend.pojo.Planed;
 import org.junit.jupiter.api.Test;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import javax.annotation.PostConstruct;
+import java.util.*;
 
 @SpringBootTest
 class BackendApplicationTests {
@@ -20,7 +19,12 @@ class BackendApplicationTests {
     @Test
     void contextLoads() {
         Graph graph = new Graph(pathMapper.selectList(null));
-        graph.getBellmanPlan(110100, 120100, 1);
+        Set<Integer> set = new HashSet<>();
+        set.add(1);set.add(3);
+        List<Path> paths = graph.bellmanFord(110100, 120100, 3, 3, set);
+        Collections.reverse(paths);
+        Planed planed = new Planed(paths);
+        System.out.println(planed);
     }
 
 }

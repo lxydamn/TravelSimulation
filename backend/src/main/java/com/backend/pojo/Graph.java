@@ -1,6 +1,8 @@
 package com.backend.pojo;
 
 
+import com.backend.utils.CityRisk;
+
 import java.util.*;
 
 public class Graph {
@@ -8,6 +10,9 @@ public class Graph {
     private Map<Integer, Path> toPaths;
     private Integer index;
     private List<Path> paths;
+
+
+
 
 
     /**
@@ -58,8 +63,30 @@ public class Graph {
 
     }
 
+    /**
+     * 计算权值
+     * pre 为该路径的上一条
+     * @param pre
+     * @param tail
+     * @param weightType
+     * @return
+     */
+    public long getWeights(Path pre, Path tail, Integer weightType) {
+        if(weightType == 1) {
+            CityRisk cityRisk = new CityRisk();
+            return cityRisk.getCityRisk(tail.getStartCity()) + cityRisk.getCityRisk(tail.getEndCity());
+        } else if(weightType == 2) {
+            return tail.getCost();
+        } else{
+            if(pre != null) {
+                return tail.getEndTime().getTime() - pre.getEndTime().getTime();
+            } else {
+                return tail.getEndTime().getTime() - tail.getStartTime().getTime();
+            }
+        }
+    }
 
-    public void dfs(Integer st, Integer ed, Stack<Path> stk, List<List<Path>> res) {
+    public void dfs(Integer st, Integer ed, Stack<Path> stk, List<List<Path>> res, Set<Integer> set) {
         if(st.equals(ed)) {
             List<Path> pathList = new ArrayList<>(stk);
             res.add(pathList);
@@ -74,17 +101,17 @@ public class Graph {
             Path p = toPaths.get(i);
 
             if(!stk.empty() && p.getStartTime().before(stk.peek().getEndTime())) continue;
-
+            if(!set.contains(p.getType())) continue;
             stk.push(p);
-            dfs(p.getEndCity(), ed, stk, res);
+            dfs(p.getEndCity(), ed, stk, res, set);
             stk.pop();
         }
 
     }
-    public Planed getDfs(Integer st, Integer ed) {
+    public Planed getDfs(Integer st, Integer ed,Set<Integer> set) {
         Stack<Path> stk = new Stack<>();
         List<List<Path>> paths = new ArrayList<>();
-        dfs(st, ed, stk, paths);
+        dfs(st, ed, stk, paths, set);
 
         List<Planed> planeds = new ArrayList<>();
 
@@ -98,42 +125,32 @@ public class Graph {
         return planeds.get(0);
     }
 
-    public Planed getBellmanPlan(Integer st, Integer ed, Integer type) {
-        List<Path> pathList = bellmanFord(st, ed, 1);
 
-        if(pathList == null) {
-            return null;
-        }
-        System.out.println(pathList);
-        return new Planed(pathList);
-    }
-
-    /**
-     * 限制中转次数的最短路
-     * @param st
-     * @param ed
-     * @param transit
-     * @return
-     */
-    public List<Path> bellmanFord(Integer st, Integer ed, Integer transit) {
+    public List<Path> bellmanFord(Integer st, Integer ed, Integer transit, Integer weightType, Set<Integer> set) {
 
         Map<Integer, Path> recordPath = new HashMap<>();
 
-        int[] dist = new int[900000];
-        int[] backup;
+        long[] dist = new long[900000];
+        long[] backup;
 
-        Arrays.fill(dist, Short.MAX_VALUE);
+        Arrays.fill(dist, Long.MAX_VALUE / 2);
         dist[st] = 0;
-
         for(int i = 0; i < transit; i ++) {
 
             backup = dist.clone();
             for(Path p : paths) {
-                Integer sc = p.getStartCity(), ec = p.getEndCity(), w = p.getCost();
+                Integer sc = p.getStartCity(), ec = p.getEndCity();
 
-                // 排除掉非法路径
                 if(recordPath.containsKey(sc) && recordPath.get(sc).getEndTime().after(p.getStartTime()))
                     continue;
+                if(!set.contains(p.getType()))
+                    continue;
+
+                Path pre = null;
+                if(recordPath.containsKey(sc))  pre = recordPath.get(sc);
+                Long w = getWeights(pre, p, weightType);
+
+                // 排除掉非法路径
 
                 if(dist[ec] > backup[sc] + w) {
                     dist[ec] = backup[sc] + w;
@@ -145,13 +162,12 @@ public class Graph {
         }
 
 
-        if(dist[ed] == Short.MAX_VALUE) {
+        if(dist[ed] == Long.MAX_VALUE / 2) {
             return null;
         }
 
         List<Path> pathList = new ArrayList<>();
         Integer cur = ed;
-
 
         while(!cur.equals(st)) {
             pathList.add(recordPath.get(cur));
