@@ -25,28 +25,12 @@ public class PlanRouteServiceImpl implements PlanRouteService {
             return graph.getDfs(st, ed, set);
 
         } catch (Exception e) {
-
             return null;
         }
-
     }
 
     @Override
     public Planed getBellmanPlanRoute(Integer st, Integer ed, Date startTime, Integer transit, Integer weightType, Set<Integer> set) {
-//        Integer st = Integer.parseInt(map.get("startCity"));
-//        Integer ed = Integer.parseInt(map.get("endCity"));
-//        Integer transit = Integer.parseInt(map.get("transit"));
-//        Integer weightType = Integer.parseInt(map.get("weightType"));
-//        Date startTime = new Date(Long.parseLong(map.get("startTime")));
-//
-//        String[] names = {"car", "train", "plane"};
-//        Set<Integer> set = new HashSet<>();
-//        for(int i = 1; i <= 3; i ++) {
-//            if(map.get(names[i - 1]).equals("true")) {
-//                set.add(i);
-//            }
-//        }
-
         Graph graph = new Graph(pathMapper.selectList(null), startTime);
         List<Path> paths = graph.bellmanFord(st, ed, transit, weightType, set);
 
@@ -56,6 +40,19 @@ public class PlanRouteServiceImpl implements PlanRouteService {
 
         return new Planed(paths);
     }
+
+    @Override
+    public Planed getDijkstraPlanRoute(Integer st, Integer ed, Date startTime, Integer weightType, Set<Integer> set) {
+        Graph graph = new Graph(pathMapper.selectList(null), startTime);
+        List<Path> paths = graph.getDijkstra(st, ed, weightType, set);
+
+        if(paths == null) {
+            return null;
+        }
+        System.out.println(new Planed(paths));
+        return new Planed(paths);
+    }
+
 
 
 }

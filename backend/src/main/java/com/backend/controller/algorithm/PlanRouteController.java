@@ -23,7 +23,7 @@ public class PlanRouteController {
         Integer st = Integer.parseInt(map.get("startCity"));
         Integer ed = Integer.parseInt(map.get("endCity"));
         Integer transit = Integer.parseInt(map.get("transit"));
-        Integer weightType = Integer.parseInt(map.get("weightType"));
+        Integer weightType = Integer.parseInt(map.get("valueStrategy"));
         Date startTime = new Date(Long.parseLong(map.get("startTime")));
 
         String[] names = {"car", "train", "plane"};
@@ -34,8 +34,8 @@ public class PlanRouteController {
             }
         }
         if(transit == -1) return planRouteService.getDfsPlanRoute(st, ed, startTime, transit, weightType, set);
-        else return planRouteService.getBellmanPlanRoute(st, ed, startTime, transit, weightType, set);
+        else if (transit == 0) {
+            return planRouteService.getDijkstraPlanRoute(st, ed, startTime, weightType, set);
+        } else return planRouteService.getBellmanPlanRoute(st, ed, startTime, transit, weightType, set);
     }
-
-
 }

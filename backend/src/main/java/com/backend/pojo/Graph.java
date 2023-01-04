@@ -12,9 +12,6 @@ public class Graph {
     private List<Path> paths;
 
 
-
-
-
     /**
      * 构造邻接表
      * @param paths
@@ -57,10 +54,12 @@ public class Graph {
                 List<Integer> temp = new ArrayList<>();
                 temp.add(index);
                 cities.put(p.getStartCity(), temp);
+                if(!cities.containsKey(p.getEndCity())) {
+                    cities.put(p.getEndCity(), null);
+                }
             }
             toPaths.put(index ++, p);
         }
-
     }
 
     /**
@@ -86,6 +85,22 @@ public class Graph {
         }
     }
 
+    public long getWeights(Path pa, Map<Integer,Date> date,Integer weightType) {
+        if(weightType == 1) {
+            CityRisk cityRisk = new CityRisk();
+            return cityRisk.getCityRisk(pa.getStartCity()) + cityRisk.getCityRisk(pa.getEndCity());
+        } else if(weightType == 2) {
+            return pa.getCost();
+        } else{
+            if(date.get(pa.getStartCity()) != null) {
+                return pa.getEndTime().getTime() - date.get(pa.getStartCity()).getTime();
+            }
+            else {
+                return pa.getEndTime().getTime() - pa.getStartTime().getTime();
+            }
+        }
+    }
+
     public void dfs(Integer st, Integer ed, Stack<Path> stk, List<List<Path>> res, Set<Integer> set) {
         if(st.equals(ed)) {
             List<Path> pathList = new ArrayList<>(stk);
@@ -106,8 +121,92 @@ public class Graph {
             dfs(p.getEndCity(), ed, stk, res, set);
             stk.pop();
         }
-
     }
+
+    public List<Path> getDijkstra(Integer st, Integer ed,Integer weightType, Set<Integer> set)
+    {
+        //初始化
+        List<Integer> unVisited=new ArrayList();
+        List<Integer> hasVisited=new ArrayList();
+        Map<Integer,Path> dist= new HashMap<>();
+        Map<Integer,Date> date = new HashMap<>();
+        Map<Integer,Path> paths = new HashMap<>();
+
+        for(Map.Entry<Integer,List<Integer>> entry : cities.entrySet())
+        {
+            dist.put(entry.getKey(),null);
+            paths.put(entry.getKey(),null);
+            date.put(entry.getKey(),null);
+            unVisited.add(entry.getKey());
+        }
+        List<Integer> temp= cities.get(st);
+        if(temp != null)
+        {
+            for(Integer t : temp)
+            {
+                if(set.contains(toPaths.get(t).getType()))
+                {
+                    dist.put(toPaths.get(t).getEndCity(),toPaths.get(t));
+                    paths.put(toPaths.get(t).getEndCity(),toPaths.get(t));
+                    date.put(toPaths.get(t).getEndCity(),toPaths.get(t).getEndTime());
+                }
+            }
+        }
+        hasVisited.add(st);
+        unVisited.remove(st);
+
+        //算法部分
+        while(!unVisited.isEmpty()){
+            Integer city = -1;
+            Path min = new Path();
+            min.setCost(Integer.MAX_VALUE);
+            for(Map.Entry<Integer,Path> entry : dist.entrySet())
+            {
+                if(unVisited.contains(entry.getKey()) && entry.getValue() != null)
+                {
+                    if(entry.getValue().getCost() < min.getCost())
+                    {
+                        city = entry.getKey();
+                        min = entry.getValue();
+                    }
+                }
+            }
+            if(city == -1) break;
+            hasVisited.add(city);
+            unVisited.remove(city);
+            date.put(city,min.getEndTime());
+
+            List<Integer> temp1= cities.get(city);
+            if(temp1 != null) {
+                for(Integer t : temp1) {
+                    if(set.contains(toPaths.get(t).getType())){
+                        if(date.get(city) == null || toPaths.get(t).getStartTime().after(date.get(city))) {
+                            Integer t1 = toPaths.get(t).getCost();
+                            if(dist.get(toPaths.get(t).getEndCity()).getCost() > dist.get(city).getCost() + t1) {
+                                Path tsb = new Path();
+                                tsb.setEndCity(toPaths.get(t).getEndCity());
+                                tsb.setCost(dist.get(city).getCost() + t1);
+                                dist.put(toPaths.get(t).getEndCity(),tsb);
+                                paths.put(toPaths.get(t).getEndCity(),toPaths.get(t));
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        Integer x = ed;
+        List<Path> allPath = new ArrayList<>();
+        while(paths.get(x) != null)
+        {
+            allPath.add(paths.get(x));
+            x = paths.get(x).getStartCity();
+        }
+        Collections.reverse(allPath);
+        System.out.println(allPath);
+        if(!x.equals(st)) return null;
+        return allPath;
+    }
+
     public Planed getDfs(Integer st, Integer ed,Set<Integer> set) {
         Stack<Path> stk = new Stack<>();
         List<List<Path>> paths = new ArrayList<>();
@@ -120,6 +219,7 @@ public class Graph {
         }
 
         planeds.sort((o1, o2) -> o1.getCost() - o2.getCost());
+        System.out.println(planeds);
 
         if(planeds.isEmpty()) return null;
         return planeds.get(0);

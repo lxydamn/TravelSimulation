@@ -8,7 +8,7 @@
         </el-col>
 
         <el-col :span="8">
-          <el-card class="box-card" style="margin-left: 15px">
+          <el-card class="box-card" style="margin-left: 15px; height: 382px;">
             <el-row>
               <el-col :span="10">
                 <div class="box">
@@ -85,27 +85,50 @@
                 <div>中转次数: </div>
               </el-col>
               <el-col :span="18">
-                <el-input-number v-model="num" :min="0" :max="5" />
+                <el-input-number v-model="transit" :min="-1" :max="5" />
               </el-col>
             </el-row>
 
             <el-row style="margin-top: 20px; margin-bottom: 20px; float: right;">
-              <el-button @click="caul">规划路径</el-button>
+              <el-button @click="caul(), showinfo()">规划路径</el-button>
             </el-row>
 
 
           </el-card>
 
           <el-card class="box-card" style="margin-top: 20px; margin-left: 15px;">
-            <el-card class="box-card" :body-style="{ padding: '0px' }">
+            <el-card class="box-card" :body-style="{ padding: '0px' }" style="height: 245px;">
               <div class="card-header" style="text-align:center">
                 <span>路径规划结果</span>
               </div>
-              <el-scrollbar max-height="200px">
-                <p v-for="item in count" :key="item" class="scrollbar-demo-item" style="text-align:center">
-                  {{ item }}
-                </p>
-              </el-scrollbar>
+              <div v-show="isShow" style="text-align:left">
+                <el-scrollbar max-height="200px">
+                  <p>
+                    &emsp;&emsp;出发时间： {{ dateFormat(datastartTime) }}
+                  </p>
+                  <p>
+                    &emsp;&emsp;到达时间： {{ dateFormat(dataendTime) }}
+                  </p>
+                  <p>
+                    &emsp;&emsp;风险系数：{{ datarisk }}&emsp;&emsp;费用开销：{{ datacost }}
+                  </p>
+
+                  <p v-for="item,index in datapaths">
+                    ====================================
+                    <br/>
+                    &emsp;&emsp;路径{{ index }}:
+                    <br/>
+                    &emsp;&emsp;{{ item.startCity }} -> {{ item.endCity }}
+                    <br/>
+                    &emsp;&emsp;交通方式：{{ item.type }}&emsp;&emsp;费用：{{ item.cost }}
+                    <br/>
+                    &emsp;&emsp;出发时间：{{ dateFormat(item.startTime) }}
+                    <br/>
+                    &emsp;&emsp;到达时间：{{ dateFormat(item.endTime) }}
+                  </p>
+
+                </el-scrollbar>
+              </div>
             </el-card>
             <el-row style="margin-top: 20px; margin-bottom: 20px; float: right;">
               <el-button @click="mock">模拟</el-button>
@@ -131,7 +154,7 @@ export default {
   setup() {
     let valueStart = ref('')
     let valueEnd = ref('')
-    const optionsCity = ref([])
+    let optionsCity = ref([])
 
     const freshSelect = () => {
       axios({
@@ -144,18 +167,15 @@ export default {
         let cities = resp.data;
         for (let city of cities) {
           optionsCity.value.push({ 'value': city.cityAdcode, 'label': city.cityName });
+
         }
       })
     }
     freshSelect();
 
-    const car = ref(true)
-    const train = ref(true)
-    const plane = ref(true)
-
-    const mock = () => {
-      MapContainer.methods.drawpath();
-    }
+    let car = ref(true)
+    let train = ref(true)
+    let plane = ref(true)
 
     let valueStrategy = ref('')
     const optionsStrategy = [
@@ -182,29 +202,57 @@ export default {
 
     let valuezCity = ref([])
 
-    const caul = () => {
 
+    let datastartTime = ref('')
+    let dataendTime = ref('')
+    let datacost = ref('')
+    let datarisk = ref('')
+    let datapaths = ref([])
+
+    const caul = () => {
       axios({
-        url:"http://localhost:3000/api/algorithm/dfs/",
-        method:"POST",
-        headers:{
+        url: "http://localhost:3000/api/algorithm/dfs/",
+        method: "POST",
+        headers: {
           Authorization: "Bearer " + localStorage.getItem("jwt_token"),
         },
-        params:{
-          startTime:valueTime.value,
-          startCity:valueStart.value,
-          endCity:valueEnd.value,
+        params: {
+          startTime: valueTime.value,
+          startCity: valueStart.value,
+          endCity: valueEnd.value,
+          car: car.value,
+          train: train.value,
+          plane: plane.value,
+          valueStrategy: valueStrategy.value,
+          valuezCity: JSON.stringify(valuezCity),
+          transit: transit.value
         }
       }).then((resp) => {
-        console.log(resp.data);
+        if (resp.data.cost === undefined) {
+          console.log(123)
+        }
+        else {
+          console.log(resp.data)
+          datastartTime.value = resp.data.startTime
+          dataendTime.value = resp.data.endTime
+          datacost.value = resp.data.cost
+          datarisk.value = resp.data.risk
+          datapaths.value = resp.data.paths
+          console.log(datapaths)
+        }
       })
-
-      MapContainer.methods.drawpath();
     }
 
-    const count = ref(50)
+    var isShow = ref(false)
+    const showinfo = () => {
+      isShow.value = true
+    }
 
-    let num = ref('')
+    let transit = ref('')
+
+    const mock = () => {
+      MapContainer.methods.drawpath();
+    }
 
     return {
       valueStart,
@@ -219,10 +267,47 @@ export default {
       valueTime,
       caul,
       mock,
-      count,
       valuezCity,
-      num,
+      transit,
+      isShow,
+      showinfo,
+
+      datastartTime,
+      dataendTime,
+      datacost,
+      datarisk,
+      datapaths,
     }
+  },
+  methods: {
+    dateFormat: function (time) {
+      var date = new Date(time);
+      var year = date.getFullYear();
+      /* 在日期格式中，月份是从0开始的，因此要加0
+       * 使用三元表达式在小于10的前面加0，以达到格式统一  如 09:11:05
+       * */
+      var month = date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1;
+      var day = date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
+      var hours = date.getHours() < 10 ? "0" + date.getHours() : date.getHours();
+      var minutes = date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes();
+      var seconds = date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds();
+      // 拼接
+      return year + "-" + month + "-" + day + " " + hours + ":" + minutes + ":" + seconds;
+    },
+    cityName: async function(adcode)
+    {
+      var res = '';
+      var key = "037a4bfd97ca4448be54d663aefaf845";
+      var urlt = "https://geoapi.qweather.com/v2/city/lookup?location="+ adcode + "&key=" + key;
+      await axios({
+        url: urlt,
+        method: "GET",
+      }).then((resp) => {
+        res = resp.data.location[0].name   
+      })
+      console.log(res)
+      return res;
+    },
   }
 }
 </script>
