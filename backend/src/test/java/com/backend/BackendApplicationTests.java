@@ -21,9 +21,8 @@ class BackendApplicationTests {
         Graph graph = new Graph(pathMapper.selectList(null));
         Set<Integer> set = new HashSet<>();
         set.add(1);set.add(3);
-        List<Path> paths = graph.bellmanFord(110100, 120100, 3, 3, set);
-        Collections.reverse(paths);
-        Planed planed = new Planed(paths);
+        Planed planed = graph.getDfs(110100, 120100, set);
+
         System.out.println(planed);
     }
 

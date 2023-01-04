@@ -32,6 +32,9 @@ public class Graph {
             toPaths.put(index ++, p);
         }
 
+        for(int i = 0; i < index; i ++) {
+            System.out.println(toPaths.get(i));
+        }
     }
 
     /**
@@ -49,7 +52,13 @@ public class Graph {
             if(p.getStartTime().before(startTime)) continue;
 
             if(cities.containsKey(p.getStartCity())) {
+
+                if(cities.get(p.getStartCity()) == null)  {
+                    cities.replace(p.getStartCity(), new ArrayList<Integer>());
+                }
+
                 cities.get(p.getStartCity()).add(index);
+
             } else {
                 List<Integer> temp = new ArrayList<>();
                 temp.add(index);
@@ -72,16 +81,24 @@ public class Graph {
      */
     public long getWeights(Path pre, Path tail, Integer weightType) {
         if(weightType == 1) {
+
             CityRisk cityRisk = new CityRisk();
-            return cityRisk.getCityRisk(tail.getStartCity()) + cityRisk.getCityRisk(tail.getEndCity());
+            int[] risks = {2, 5, 9};
+            return cityRisk.getCityRisk(tail.getStartCity()) +
+                    cityRisk.getCityRisk(tail.getEndCity()) + risks[tail.getType() - 1];
+
         } else if(weightType == 2) {
+
             return tail.getCost();
-        } else{
+
+        } else {
+
             if(pre != null) {
                 return tail.getEndTime().getTime() - pre.getEndTime().getTime();
             } else {
                 return tail.getEndTime().getTime() - tail.getStartTime().getTime();
             }
+
         }
     }
 
@@ -235,6 +252,7 @@ public class Graph {
 
         Arrays.fill(dist, Long.MAX_VALUE / 2);
         dist[st] = 0;
+
         for(int i = 0; i < transit; i ++) {
 
             backup = dist.clone();
@@ -251,7 +269,6 @@ public class Graph {
                 Long w = getWeights(pre, p, weightType);
 
                 // 排除掉非法路径
-
                 if(dist[ec] > backup[sc] + w) {
                     dist[ec] = backup[sc] + w;
                     if(recordPath.containsKey(ec)) recordPath.replace(ec, p);

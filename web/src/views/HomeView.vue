@@ -118,7 +118,7 @@
                     <br/>
                     &emsp;&emsp;路径{{ index }}:
                     <br/>
-                    &emsp;&emsp;{{ item.startCity }} -> {{ item.endCity }}
+                    &emsp;&emsp;{{ cityName(item.startCity) }} -> {{ cityName(item.endCity) }}
                     <br/>
                     &emsp;&emsp;交通方式：{{ item.type }}&emsp;&emsp;费用：{{ item.cost }}
                     <br/>
@@ -146,6 +146,7 @@
 import MapContainer from "@/components/MapContainer";
 import { ref } from 'vue';
 import axios from "axios"
+import AdcodeToCity from "@/utils/queryCity";
 
 export default {
   components: {
@@ -228,6 +229,7 @@ export default {
           transit: transit.value
         }
       }).then((resp) => {
+        console.log(resp.data);
         if (resp.data.cost === undefined) {
           console.log(123)
         }
@@ -241,6 +243,10 @@ export default {
           console.log(datapaths)
         }
       })
+    }
+    const cityName = (adcode) => {
+      console.log(AdcodeToCity);
+      return AdcodeToCity.get(adcode);
     }
 
     var isShow = ref(false)
@@ -271,7 +277,7 @@ export default {
       transit,
       isShow,
       showinfo,
-
+      cityName,
       datastartTime,
       dataendTime,
       datacost,
@@ -294,20 +300,7 @@ export default {
       // 拼接
       return year + "-" + month + "-" + day + " " + hours + ":" + minutes + ":" + seconds;
     },
-    cityName: async function(adcode)
-    {
-      var res = '';
-      var key = "037a4bfd97ca4448be54d663aefaf845";
-      var urlt = "https://geoapi.qweather.com/v2/city/lookup?location="+ adcode + "&key=" + key;
-      await axios({
-        url: urlt,
-        method: "GET",
-      }).then((resp) => {
-        res = resp.data.location[0].name   
-      })
-      console.log(res)
-      return res;
-    },
+
   }
 }
 </script>
