@@ -44,7 +44,13 @@ public class PlanRouteServiceImpl implements PlanRouteService {
     @Override
     public Planed getDijkstraPlanRoute(Integer st, Integer ed, Date startTime, Integer weightType, Set<Integer> set) {
         Graph graph = new Graph(pathMapper.selectList(null), startTime);
-        List<Path> paths = graph.getDijkstra(st, ed, weightType, set);
+        List<Path> paths;
+        if(weightType == 2) {
+            paths = graph.getDijkstraRisk(st, ed, set);
+        }
+        else {
+            paths= graph.getDijkstra(st, ed, weightType, set);
+        }
 
         if(paths == null) {
             return null;

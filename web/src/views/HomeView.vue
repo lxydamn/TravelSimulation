@@ -8,7 +8,7 @@
         </el-col>
 
         <el-col :span="8">
-          <el-card class="box-card" style="margin-left: 15px; height: 382px;">
+          <el-card class="box-card" style="margin-left: 15px; height: 350px;">
             <el-row>
               <el-col :span="10">
                 <div class="box">
@@ -58,7 +58,7 @@
               </el-col>
             </el-row>
 
-            <el-row style="margin-top: 10px;">
+            <el-row style="margin-top: 15px;">
               <el-col :span="6">
                 <div>出行策略: </div>
               </el-col>
@@ -70,17 +70,7 @@
               </el-col>
             </el-row>
 
-            <el-row style="margin-top: 10px;">
-              <el-col :span="6">
-                <div>中转城市: </div>
-              </el-col>
-              <el-col :span="18">
-                <el-select-v2 v-model="valuezCity" :options="optionsCity" placeholder="选择中转的城市" style="width: 280px"
-                  multiple />
-              </el-col>
-            </el-row>
-
-            <el-row style="margin-top: 10px;">
+            <el-row style="margin-top: 15px;">
               <el-col :span="6">
                 <div>中转次数: </div>
               </el-col>
@@ -90,18 +80,24 @@
             </el-row>
 
             <el-row style="margin-top: 20px; margin-bottom: 20px; float: right;">
-              <el-button @click="caul(), showinfo()">规划路径</el-button>
+              <el-button @click="caul()">规划路径</el-button>
             </el-row>
 
 
           </el-card>
 
           <el-card class="box-card" style="margin-top: 20px; margin-left: 15px;">
-            <el-card class="box-card" :body-style="{ padding: '0px' }" style="height: 245px;">
+            <el-card class="box-card" :body-style="{ padding: '0px' }" style="height: 277px;">
               <div class="card-header" style="text-align:center">
                 <span>路径规划结果</span>
               </div>
-              <div v-show="isShow" style="text-align:left">
+              <div v-if="isEmpty" style="text-align:center">
+                <p>
+                  暂无信息
+                </p>
+              </div>
+              <div v-else style="text-align:left">
+                
                 <el-scrollbar max-height="200px">
                   <p>
                     &emsp;&emsp;出发时间： {{ dateFormat(datastartTime) }}
@@ -120,7 +116,7 @@
                     <br/>
                     &emsp;&emsp;{{ cityName(item.startCity) }} -> {{ cityName(item.endCity) }}
                     <br/>
-                    &emsp;&emsp;交通方式：{{ item.type }}&emsp;&emsp;费用：{{ item.cost }}
+                    &emsp;&emsp;交通方式：{{ typeToTransportation(item.type) }}&emsp;&emsp;费用：{{ item.cost }}
                     <br/>
                     &emsp;&emsp;出发时间：{{ dateFormat(item.startTime) }}
                     <br/>
@@ -168,7 +164,6 @@ export default {
         let cities = resp.data;
         for (let city of cities) {
           optionsCity.value.push({ 'value': city.cityAdcode, 'label': city.cityName });
-
         }
       })
     }
@@ -194,14 +189,12 @@ export default {
       },
       {
         value: '4',
-        label: '城市中转',
+        label: '限制中转次数',
       },
     ]
 
     const size = ref('default')
     let valueTime = ref('')
-
-    let valuezCity = ref([])
 
 
     let datastartTime = ref('')
@@ -209,6 +202,7 @@ export default {
     let datacost = ref('')
     let datarisk = ref('')
     let datapaths = ref([])
+    var isEmpty = ref(true)
 
     const caul = () => {
       axios({
@@ -225,39 +219,27 @@ export default {
           train: train.value,
           plane: plane.value,
           valueStrategy: valueStrategy.value,
-          valuezCity: JSON.stringify(valuezCity),
           transit: transit.value
         }
       }).then((resp) => {
-        console.log(resp.data);
         if (resp.data.cost === undefined) {
-          console.log(123)
+          isEmpty.value = true
         }
         else {
-          console.log(resp.data)
+          isEmpty.value = false
           datastartTime.value = resp.data.startTime
           dataendTime.value = resp.data.endTime
           datacost.value = resp.data.cost
           datarisk.value = resp.data.risk
           datapaths.value = resp.data.paths
-          console.log(datapaths)
         }
       })
-    }
-    const cityName = (adcode) => {
-      console.log(AdcodeToCity);
-      return AdcodeToCity.get(adcode);
-    }
-
-    var isShow = ref(false)
-    const showinfo = () => {
-      isShow.value = true
     }
 
     let transit = ref('')
 
     const mock = () => {
-      MapContainer.methods.drawpath();
+      MapContainer.methods.drawpath(datapaths._rawValue);
     }
 
     return {
@@ -273,11 +255,8 @@ export default {
       valueTime,
       caul,
       mock,
-      valuezCity,
+      isEmpty,
       transit,
-      isShow,
-      showinfo,
-      cityName,
       datastartTime,
       dataendTime,
       datacost,
@@ -300,7 +279,14 @@ export default {
       // 拼接
       return year + "-" + month + "-" + day + " " + hours + ":" + minutes + ":" + seconds;
     },
-
+    cityName: function(adcode) {
+      return AdcodeToCity.get(adcode.toString());
+    },
+    typeToTransportation: function(type) {
+      if(type == "1") return "汽车";
+      else if(type == "2") return "火车";
+      else return "飞机";
+    },
   }
 }
 </script>

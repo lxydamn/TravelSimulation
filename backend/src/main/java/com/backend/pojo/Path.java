@@ -25,6 +25,4 @@ public class Path {
     private Date endTime;
     private Integer cost;
     private Integer type;
-
-
 }

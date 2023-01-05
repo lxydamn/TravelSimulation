@@ -2,13 +2,15 @@ import $ from 'jquery'
 
 let AdcodeToCity = new Map;
 
-$.get('../../areas.json', (data) => {
+$.get('../../geoinfo-all.json', (data) => {
     for(let province of data) {
-        for(let city of province.city) {
-            AdcodeToCity.set(city.city_name, city.city_adcode);
-            AdcodeToCity.set(city.city_adcode, city.city_name);
+        for(let city of province.districts) {
+            AdcodeToCity.set(city.name, city.adcode);
+            AdcodeToCity.set(city.adcode, city.name);
         }
     }
 })
+
+
 
 export default AdcodeToCity;

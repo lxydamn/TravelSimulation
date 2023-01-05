@@ -10,6 +10,7 @@
 import AMapLoader from '@amap/amap-jsapi-loader';
 import { shallowRef } from '@vue/reactivity';
 import axios from "axios"
+import AdcodeToLng from "@/utils/queryLng"
 
 export default {
   setup() {
@@ -90,7 +91,7 @@ export default {
               var t = city.cityAdcode.toString()
               var t1 = t.substring(0, 2)
               var t2 = t1.concat("0000")
-              if(GDPSpeed[t2] < city.grade) {
+              if (GDPSpeed[t2] < city.grade) {
                 GDPSpeed[t2] = city.grade
               }
             }
@@ -143,71 +144,49 @@ export default {
 
         window.map = this.map;
 
-        /*new AMapUI.SimpleMarker({
-          //前景文字
-          iconLabel: 'A',
-          //图标主题
-          iconTheme: 'default',
-          //背景图标样式
-          iconStyle: 'red',
-          map: this.map,
-          position: this.map.getCenter()
-        });*/
-
-        /*var pathSimplifierIns = new AMapUI.PathSimplifier({
-          zIndex: 100,
-          map: this.map, //所属的地图实例
-          getPath: function (pathData, pathIndex) {
-            //返回轨迹数据中的节点坐标信息，[AMap.LngLat, AMap.LngLat...] 或者 [[lng|number,lat|number],...]
-            return pathData.path;
-          },
-          getHoverTitle: function (pathData, pathIndex, pointIndex) {
-            //返回鼠标悬停时显示的信息
-            if (pointIndex >= 0) {
-              //鼠标悬停在某个轨迹节点上
-              return pathData.name + '，点:' + pointIndex + '/' + pathData.path.length;
-            }
-            //鼠标悬停在节点之间的连线上
-            return pathData.name + '，点数量' + pathData.path.length;
-          },
-          renderOptions: {
-            //轨迹线的样式
-            pathLineStyle: {
-              strokeStyle: 'red',
-              lineWidth: 6,
-              dirArrowStyle: true
-            }
-          }
-        });
-
-        //这里构建两条简单的轨迹，仅作示例
-        pathSimplifierIns.setData([{
-          name: '轨迹0',
-          path: [
-            [100.340417, 27.376994],
-            [108.426354, 37.827452],
-            [113.392174, 31.208439],
-            [124.905846, 42.232876]
-          ]
-        }, {
-          name: '大地线',
-          //创建一条包括500个插值点的大地线
-          path: AMapUI.PathSimplifier.getGeodesicPath([116.405289, 39.904987], [87.61792, 43.793308], 500)
-        }]);
-        var navg0 = pathSimplifierIns.createPathNavigator(0, //关联第1条轨迹
-          {
-            loop: true, //循环播放
-            speed: 1000000
-          });
-
-        navg0.start();*/
-
       }).catch(e => {
         console.log(e);
       })
     },
-    drawpath() {
-      //eslint-disable-next-line no-undef
+    drawpath(paths) {
+      if (window.pathSimplifierIns) {
+        //通过该方法清空上次传入的轨迹
+        pathSimplifierIns.setData([]);
+      }
+
+      //经纬度数据处理
+      let temp = [];
+      for (let i = 0; i < paths.length; i++) {
+        if (i != paths.length - 1) {
+          let t = this.cityLng(paths[i].startCity.toString());
+          let t1 = t.split(',')
+          for (let j = 0; j < t1.length; j++) {
+            t1[j] = parseFloat(t1[j])
+          }
+          t1.push(paths[i].type)
+          temp.push(t1)
+        }
+        else {
+          let t = this.cityLng(paths[i].startCity.toString());
+          let t1 = t.split(',')
+          for (let j = 0; j < t1.length; j++) {
+            t1[j] = parseFloat(t1[j])
+          }
+          t1.push(paths[i].type)
+          temp.push(t1)
+
+          t = this.cityLng(paths[i].endCity.toString());
+          t1 = t.split(',')
+          for (let j = 0; j < t1.length; j++) {
+            t1[j] = parseFloat(t1[j])
+          }
+          t1.push(paths[i].type)
+          temp.push(t1)
+        }
+      }
+      console.log(temp)
+
+      //创建轨迹组件
       AMapUI.load(['ui/misc/PathSimplifier'], (PathSimplifier) => {
 
         if (!PathSimplifier.supportCanvas) {
@@ -221,13 +200,12 @@ export default {
       });
 
       function initPage(PathSimplifier) {
+
         //创建组件实例
         let pathSimplifierIns = new PathSimplifier({
           zIndex: 100,
           map: window.map, //所属的地图实例
-          // eslint-disable-next-line no-unused-vars
           getPath: function (pathData, pathIndex) {
-            //返回轨迹数据中的节点坐标信息，[AMap.LngLat, AMap.LngLat...] 或者 [[lng|number,lat|number],...]
             return pathData.path;
           },
           getHoverTitle: function (pathData, pathIndex, pointIndex) {
@@ -243,46 +221,99 @@ export default {
             //轨迹线的样式
             pathLineStyle: {
               strokeStyle: 'red',
-              lineWidth: 6,
+              lineWidth: 10,
               dirArrowStyle: true
             }
           }
         });
 
-        //这里构建两条简单的轨迹，仅作示例
+        window.pathSimplifierIns = pathSimplifierIns
+
         pathSimplifierIns.setData([{
           name: '轨迹0',
-          path: [
-            [100.340417, 27.376994],
-            [108.426354, 37.827452],
-            [113.392174, 31.208439],
-            [124.905846, 42.232876]
-          ]
-        }, {
-          name: '大地线',
-          //创建一条包括500个插值点的大地线
-          path: PathSimplifier.getGeodesicPath([116.405289, 39.904987], [87.61792, 43.793308], 500)
-        }]);
+          path: temp,
+        },]);
 
-        let navg0 = pathSimplifierIns.createPathNavigator(0, //关联第1条轨迹
-            {
-              speed: 1000000,
-              pathNavigatorStyle:{
-                content: PathSimplifier.Render.Canvas.getImageContent(
-                  "https://s2.loli.net/2022/11/19/3fL4dZzHC5Mosep.png",
-                    function onload() {
-                      pathSimplifierIns.renderLater();
-                    },
-                    function onerror() {
-                      alert('图片加载失败！');
-                    }),
+        //
+        function onload() {
+          pathSimplifierIns.renderLater();
+        }
+
+        function onerror(e) {
+          alert('图片加载失败！');
+        }
+
+        var pathNavigatorStyles = [{
+          //飞机
+          width: 30,
+          height: 30,
+          content: PathSimplifier.Render.Canvas.getImageContent("https://i.328888.xyz/2023/01/05/WNR3X.png", onload, onerror),
+        },
+        {
+          //汽车
+          width: 30,
+          height: 30,
+          content: PathSimplifier.Render.Canvas.getImageContent("https://i.328888.xyz/2023/01/05/WNcSt.png", onload, onerror),
+        },
+        {
+          //火车
+          width: 30,
+          height: 30,
+          content: PathSimplifier.Render.Canvas.getImageContent('https://i.328888.xyz/2023/01/05/WN3DP.png', onload, onerror),
+        }
+        ]
+
+        //覆盖方法
+        function extend(dst) {
+          if (!dst) {
+            dst = {};
+          }
+          var slist = Array.prototype.slice.call(arguments, 1);
+          for (var i = 0, len = slist.length; i < len; i++) {
+            var source = slist[i];
+            if (!source) {
+              continue;
+            }
+            for (var prop in source) {
+              if (source.hasOwnProperty(prop)) {
+                dst[prop] = source[prop];
               }
-            });
+            }
+          }
+          return dst;
+        }
 
+        //设置巡航器
+        let navg0 = pathSimplifierIns.createPathNavigator(0, //关联第1条轨迹
+          {
+            speed: 100000,
+            pathNavigatorStyle: extend({}, pathNavigatorStyles[pathSimplifierIns._data.source[0].path[0][2]])
+          });
         navg0.start();
+
+        //改变巡航器样式
+        function changeNavgContent() {
+
+          //获取到pathNavigatorStyle的引用
+          var pathNavigatorStyle = navg0.getStyleOptions();
+
+          //覆盖修改
+          let now = navg0.getCursor().idx;
+          let typetemp = pathSimplifierIns._data.source[0].path[now];
+          let type = typetemp[2];
+          extend(pathNavigatorStyle, pathNavigatorStyles[type % 3]);
+
+          //重新绘制
+          pathSimplifierIns.renderLater();
+          //console.log(type)
+        }
+        setInterval(changeNavgContent, 50);
       }
     },
-    
+    cityLng: function (adcode) {
+      return AdcodeToLng.get(adcode.toString());
+    },
+
   },
   mounted() {
     //DOM初始化完成进行地图初始化
