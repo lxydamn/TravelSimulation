@@ -26,9 +26,12 @@ public class Planed {
 
     private Date endTime;
 
-    public Planed(List<Path> ps) {
+    private Integer strategy;
+
+    public Planed(List<Path> ps, Integer weight) {
         paths = ps;
         cost = risk = transit = 0;
+        strategy = weight;
         startTime = ps.get(0).getStartTime();
         endTime = ps.get(ps.size() - 1).getEndTime();
         transit = ps.size() - 1;

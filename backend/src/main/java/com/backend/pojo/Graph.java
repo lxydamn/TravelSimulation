@@ -313,7 +313,7 @@ public class Graph {
         return allPath;
     }
 
-    public Planed getDfs(Integer st, Integer ed,Set<Integer> set) {
+    public Planed getDfs(Integer st, Integer ed,Set<Integer> set, Integer trans) {
         Stack<Path> stk = new Stack<>();
         List<List<Path>> paths = new ArrayList<>();
         dfs(st, ed, stk, paths, set);
@@ -321,7 +321,7 @@ public class Graph {
         List<Planed> planeds = new ArrayList<>();
 
         for(List<Path> ps : paths) {
-            planeds.add(new Planed(ps));
+            planeds.add(new Planed(ps, trans));
         }
 
         planeds.sort((o1, o2) -> o1.getCost() - o2.getCost());

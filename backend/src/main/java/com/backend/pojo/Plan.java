@@ -13,11 +13,16 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Plan {
-
     private Integer userId;
     @TableId(type = IdType.AUTO)
     private Integer id;
     private String content;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm", timezone = "Asia/Shanghai")
     private Date createTime;
+    private Integer startCity;
+    private Integer endCity;
+    private Integer cost;
+    private Integer strategy;
+    private Integer transit;
+    private Integer risk;
 }

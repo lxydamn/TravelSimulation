@@ -21,7 +21,7 @@ class BackendApplicationTests {
         Graph graph = new Graph(pathMapper.selectList(null));
         Set<Integer> set = new HashSet<>();
         set.add(1);set.add(3);
-        Planed planed = graph.getDfs(110100, 120100, set);
+        Planed planed = graph.getDfs(110100, 120100, set,0);
 
     }
 

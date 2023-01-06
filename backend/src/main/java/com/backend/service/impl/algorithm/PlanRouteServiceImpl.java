@@ -22,7 +22,7 @@ public class PlanRouteServiceImpl implements PlanRouteService {
         try {
             Graph graph = new Graph(pathMapper.selectList(null), startTime);
 
-            return graph.getDfs(st, ed, set);
+            return graph.getDfs(st, ed, set,weightType);
 
         } catch (Exception e) {
             return null;
@@ -38,7 +38,7 @@ public class PlanRouteServiceImpl implements PlanRouteService {
             return null;
         }
         Collections.reverse(paths);
-        return new Planed(paths);
+        return new Planed(paths, weightType);
     }
 
     @Override
@@ -55,10 +55,6 @@ public class PlanRouteServiceImpl implements PlanRouteService {
         if(paths == null) {
             return null;
         }
-
-        return new Planed(paths);
+        return new Planed(paths,weightType);
     }
-
-
-
 }

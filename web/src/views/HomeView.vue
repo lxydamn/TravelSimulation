@@ -98,7 +98,7 @@
               </div>
               <div v-else style="text-align:left">
                 
-                <el-scrollbar max-height="200px">
+                <el-scrollbar max-height="230px">
                   <p>
                     &emsp;&emsp;出发时间： {{ dateFormat(datastartTime) }}
                   </p>
@@ -128,7 +128,7 @@
             </el-card>
             <el-row style="margin-top: 20px; margin-bottom: 20px; float: right;">
               <el-button @click="mock">模拟</el-button>
-              <el-button>保存</el-button>
+              <el-button @click="save">保存</el-button>
             </el-row>
           </el-card>
         </el-col>
@@ -143,6 +143,7 @@ import MapContainer from "@/components/MapContainer";
 import { ref } from 'vue';
 import axios from "axios"
 import AdcodeToCity from "@/utils/queryCity";
+import { useStore } from 'vuex';
 
 export default {
   components: {
@@ -202,6 +203,9 @@ export default {
     let datacost = ref('')
     let datarisk = ref('')
     let datapaths = ref([])
+    let dataStrategy = ref('')
+    let datatransit = ref('')
+    let data = ref()
     var isEmpty = ref(true)
 
     const caul = () => {
@@ -226,12 +230,17 @@ export default {
           isEmpty.value = true
         }
         else {
+          data = resp.data
+
+          console.log(resp.data)
           isEmpty.value = false
           datastartTime.value = resp.data.startTime
           dataendTime.value = resp.data.endTime
           datacost.value = resp.data.cost
           datarisk.value = resp.data.risk
           datapaths.value = resp.data.paths
+          dataStrategy.value = resp.data.strategy
+          datatransit.value = resp.data.transit
         }
       })
     }
@@ -240,6 +249,31 @@ export default {
 
     const mock = () => {
       MapContainer.methods.drawpath(datapaths._rawValue);
+    }
+
+    const store = useStore();
+    const save = () => {
+      console.log(datapaths.value.length - 1)
+      axios({
+        url: "http://localhost:3000/api/back/saverecord/",
+        method: "POST",
+        headers: {
+          Authorization: "Bearer " + localStorage.getItem("jwt_token"),
+        },
+        params: {
+          recordData: JSON.stringify(data),
+          userId: (store.state.user.id),
+          startCity: (datapaths.value[0].startCity),
+          endCity: (datapaths.value[datapaths.value.length - 1].endCity),
+          length: (datapaths.value.length - 1),
+          strategy: dataStrategy.value,
+          transit: datatransit.value,
+          cost: datacost.value,
+          risk: datarisk.value
+        }
+      }).then((resp) => {
+        
+      })
     }
 
     return {
@@ -255,6 +289,7 @@ export default {
       valueTime,
       caul,
       mock,
+      save,
       isEmpty,
       transit,
       datastartTime,
@@ -262,6 +297,8 @@ export default {
       datacost,
       datarisk,
       datapaths,
+      dataStrategy,
+      datatransit,
     }
   },
   methods: {

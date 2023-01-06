@@ -5,7 +5,7 @@
         <div id="container">
           <div>
             <el-row gutter="20">
-              <el-col :span="8" :offset="1">
+              <el-col :span="6" :offset="1">
                 <el-card class="user" shadow="hover">
 
                   <template #header>
@@ -25,18 +25,32 @@
                 </el-card>
               </el-col>
 
-              <el-col :span="13" :offset="1">
-                <el-card class="record" shadow="hover" >
+              <el-col :span="15" :offset="1">
+                <el-card class="record" shadow="hover">
                   <template #header>
                     <div class="clearfix">
                       <span>历史记录</span>
                     </div>
                   </template>
 
-                  <el-table :data="tableData" style="width: 100%">
-                    <el-table-column prop="date" label="Date" width="180" />
-                    <el-table-column prop="name" label="Name" width="180" />
-                    <el-table-column prop="address" label="Address" />
+                  <el-table :data="tableData" style="width: 100%" max-height="400">
+                    <el-table-column fixed prop="date" label="日期" width="120" />
+                    <el-table-column prop="name" label="出发地" width="120" />
+                    <el-table-column prop="state" label="目的地" width="120" />
+                    <el-table-column prop="city" label="出行策略" width="120" />
+                    <el-table-column prop="address" label="中转次数" width="120" />
+                    <el-table-column prop="zip" label="风险系数" width="120" />
+                    <el-table-column prop="zip" label="预计费用" width="120" />
+                    <el-table-column fixed="right" label="操作" width="120">
+                      <template #default="scope">
+                        <el-button link type="primary" size="default" @click.prevent="deleteRow(scope.$index)">
+                          详情
+                        </el-button>
+                        <el-button link type="primary" size="default" @click.prevent="deleteRow(scope.$index)">
+                          删除
+                        </el-button>
+                      </template>
+                    </el-table-column>
                   </el-table>
 
                 </el-card>
@@ -55,37 +69,50 @@
 
 <script>
 import { useStore } from 'vuex';
+import { ref } from 'vue'
 
 export default {
   setup() {
     const store = useStore();
-    console.log(store.state.user.photo)
 
-    const tableData = [
+    const now = new Date()
+
+    const tableData = ref([
       {
-        date: '2016-05-03',
+        date: '2016-05-01',
         name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
+        state: 'California',
+        city: 'Los Angeles',
+        address: '1',
+        zip: 'CA 90036',
       },
       {
         date: '2016-05-02',
         name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
+        state: 'California',
+        city: 'Los Angeles',
+        address: '1',
+        zip: 'CA 90036',
       },
       {
-        date: '2016-05-04',
+        date: '2016-05-03',
         name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
+        state: 'California',
+        city: 'Los Angeles',
+        address: '1',
+        zip: 'CA 90036',
       },
-      {
-        date: '2016-05-01',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-      },
-    ]
+    ])
+
+    const deleteRow = (index) => {
+      tableData.value.splice(index, 1)
+    }
+
     return {
       store,
-      tableData
+      now,
+      tableData,
+      deleteRow,
     }
   }
 }
@@ -97,10 +124,12 @@ export default {
   height: 650px;
   background: beige;
 }
+
 .user {
   margin-top: 25px;
   padding: 10px
 }
+
 .record {
   margin-top: 25px;
   padding: 10px;
