@@ -109,7 +109,8 @@ public class Graph {
     public long getWeights(Path pa, Map<Integer,Date> date,Integer weightType) {
         if(weightType == 3) {
             return pa.getCost();
-        } else{
+        }
+        else{
             if(date.get(pa.getStartCity()) != null) {
                 return pa.getEndTime().getTime() - date.get(pa.getStartCity()).getTime();
             }
@@ -158,18 +159,21 @@ public class Graph {
             unVisited.add(entry.getKey());
         }
         List<Integer> temp= cities.get(st);
-        if(temp != null)
-        {
-            for(Integer t : temp)
-            {
-                if(set.contains(toPaths.get(t).getType()))
-                {
-                    distRisk.put(toPaths.get(t).getEndCity(),
-                            cityRisk.getCityRisk(toPaths.get(t).getStartCity())
-                            + cityRisk.getCityRisk(toPaths.get(t).getEndCity())
-                                    + risks[toPaths.get(t).getType() - 1]);
-                    paths.put(toPaths.get(t).getEndCity(),toPaths.get(t));
-                    date.put(toPaths.get(t).getEndCity(),toPaths.get(t).getEndTime());
+        if(temp != null) {
+            for(Integer t : temp) {
+                if(set.contains(toPaths.get(t).getType())) {
+                    if(distRisk.get(toPaths.get(t).getEndCity()) == null ||
+                            distRisk.get(toPaths.get(t).getEndCity()) >
+                                    cityRisk.getCityRisk(toPaths.get(t).getStartCity())
+                                    + cityRisk.getCityRisk(toPaths.get(t).getEndCity())
+                                    + risks[toPaths.get(t).getType() - 1]){
+                        distRisk.put(toPaths.get(t).getEndCity(),
+                                cityRisk.getCityRisk(toPaths.get(t).getStartCity())
+                                        + cityRisk.getCityRisk(toPaths.get(t).getEndCity())
+                                        + risks[toPaths.get(t).getType() - 1]);
+                        paths.put(toPaths.get(t).getEndCity(),toPaths.get(t));
+                        date.put(toPaths.get(t).getEndCity(),toPaths.get(t).getEndTime());
+                    }
                 }
             }
         }
@@ -241,15 +245,17 @@ public class Graph {
             unVisited.add(entry.getKey());
         }
         List<Integer> temp= cities.get(st);
-        if(temp != null)
-        {
-            for(Integer t : temp)
-            {
-                if(set.contains(toPaths.get(t).getType()))
-                {
-                    dist.put(toPaths.get(t).getEndCity(),toPaths.get(t));
-                    paths.put(toPaths.get(t).getEndCity(),toPaths.get(t));
-                    date.put(toPaths.get(t).getEndCity(),toPaths.get(t).getEndTime());
+        if(temp != null) {
+            for(Integer t : temp) {
+                if(set.contains(toPaths.get(t).getType())) {
+                    if(dist.get(toPaths.get(t).getEndCity()) == null ||
+                            getWeights(dist.get(toPaths.get(t).getEndCity()),date,weightType)
+                                    > getWeights(toPaths.get(t),date,weightType)) {
+                        dist.put(toPaths.get(t).getEndCity(),toPaths.get(t));
+                        paths.put(toPaths.get(t).getEndCity(),toPaths.get(t));
+                        date.put(toPaths.get(t).getEndCity(),toPaths.get(t).getEndTime());
+                    }
+
                 }
             }
         }
@@ -286,11 +292,16 @@ public class Graph {
                     if(set.contains(toPaths.get(t).getType())){
                         if(date.get(city) == null || toPaths.get(t).getStartTime().after(date.get(city))) {
                             long t1 = getWeights(toPaths.get(t),date,weightType);
-                            if(getWeights(dist.get(toPaths.get(t).getEndCity()),date,weightType)
+                            if(dist.get(toPaths.get(t).getEndCity()) == null ||
+                                    getWeights(dist.get(toPaths.get(t).getEndCity()),date,weightType)
                                     > getWeights(dist.get(city),date,weightType) + t1) {
                                 Path tsb = new Path();
                                 tsb.setEndCity(toPaths.get(t).getEndCity());
-                                tsb.setStartTime(dist.get(toPaths.get(t).getEndCity()).getStartTime());
+                                if(dist.get(toPaths.get(t).getEndCity()) == null){
+                                    tsb.setStartTime(dist.get(city).getStartTime());
+                                }else {
+                                    tsb.setStartTime(dist.get(toPaths.get(t).getEndCity()).getStartTime());
+                                }
                                 tsb.setEndTime(toPaths.get(t).getEndTime());
                                 tsb.setCost((int) (getWeights(dist.get(city),date,weightType) + t1));
                                 dist.put(toPaths.get(t).getEndCity(),tsb);
