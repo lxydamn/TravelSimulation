@@ -23,7 +23,6 @@ class BackendApplicationTests {
         set.add(1);set.add(3);
         Planed planed = graph.getDfs(110100, 120100, set);
 
-        System.out.println(planed);
     }
 
 }

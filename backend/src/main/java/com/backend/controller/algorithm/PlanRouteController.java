@@ -33,9 +33,10 @@ public class PlanRouteController {
                 set.add(i);
             }
         }
-        if(transit == -1) return planRouteService.getDfsPlanRoute(st, ed, startTime, transit, weightType, set);
-        else if (transit == 0) {
+        if (transit == -1) {
             return planRouteService.getDijkstraPlanRoute(st, ed, startTime, weightType, set);
-        } else return planRouteService.getBellmanPlanRoute(st, ed, startTime, transit, weightType, set);
+        } else {
+            return planRouteService.getBellmanPlanRoute(st, ed, startTime, transit + 1, weightType, set);
+        }
     }
 }

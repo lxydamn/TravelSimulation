@@ -35,9 +35,6 @@ public class Graph {
             toPaths.put(index ++, p);
         }
 
-        for(int i = 0; i < index; i ++) {
-            System.out.println(toPaths.get(i));
-        }
     }
 
     /**
@@ -50,10 +47,14 @@ public class Graph {
         cityRisk = new CityRisk();
         cities = new HashMap<>();
         toPaths = new HashMap<>();
+
+        List<Path> pathList = new ArrayList<>();
         index = 0;
         for(Path p : paths) {
 
             if(p.getStartTime().before(startTime)) continue;
+
+            pathList.add(p);
 
             if(cities.containsKey(p.getStartCity())) {
 
@@ -73,6 +74,8 @@ public class Graph {
             }
             toPaths.put(index ++, p);
         }
+
+        this.paths = pathList;
     }
 
     /**
@@ -84,11 +87,11 @@ public class Graph {
      * @return
      */
     public long getWeights(Path pre, Path tail, Integer weightType) {
-        if(weightType == 1) {
+        if(weightType == 2) {
             return cityRisk.getCityRisk(tail.getStartCity()) +
                     cityRisk.getCityRisk(tail.getEndCity()) + risks[tail.getType() - 1];
 
-        } else if(weightType == 2) {
+        } else if(weightType == 3) {
 
             return tail.getCost();
 
@@ -199,6 +202,7 @@ public class Graph {
                             Integer t1 = cityRisk.getCityRisk(toPaths.get(t).getStartCity())
                                     + cityRisk.getCityRisk(toPaths.get(t).getEndCity())
                                     + risks[toPaths.get(t).getType() - 1];
+                            if(distRisk.get(toPaths.get(t).getEndCity()) == null || distRisk.get(city) == null) continue;
                             if(distRisk.get(toPaths.get(t).getEndCity()) > distRisk.get(city) + t1) {
                                 date.put(toPaths.get(t).getEndCity(),toPaths.get(t).getEndTime());
                                 paths.put(toPaths.get(t).getEndCity(),toPaths.get(t));
@@ -321,7 +325,6 @@ public class Graph {
         }
 
         planeds.sort((o1, o2) -> o1.getCost() - o2.getCost());
-        System.out.println(planeds);
 
         if(planeds.isEmpty()) return null;
         return planeds.get(0);
@@ -330,7 +333,7 @@ public class Graph {
 
     public List<Path> bellmanFord(Integer st, Integer ed, Integer transit, Integer weightType, Set<Integer> set) {
 
-        Map<Integer, Path> recordPath = new HashMap<>();
+        HashMap<Integer, Path>[] recordPath = new HashMap[transit + 1];
 
         long[] dist = new long[900000];
         long[] backup;
@@ -338,31 +341,39 @@ public class Graph {
         Arrays.fill(dist, Long.MAX_VALUE / 2);
         dist[st] = 0;
 
-        for(int i = 0; i < transit; i ++) {
+        if(paths == null) {
+            return null;
+        }
 
+        for(int i = 1; i <= transit; i ++) {
+            recordPath[i] = new HashMap<>();
             backup = dist.clone();
             for(Path p : paths) {
                 Integer sc = p.getStartCity(), ec = p.getEndCity();
 
-                if(recordPath.containsKey(sc) && recordPath.get(sc).getEndTime().after(p.getStartTime()))
-                    continue;
+                if(recordPath[i - 1] != null) {
+                    if(recordPath[i - 1].containsKey(sc) &&
+                            recordPath[i - 1].get(sc).getEndTime().after(p.getStartTime()))
+                        continue;
+                }
                 if(!set.contains(p.getType()))
                     continue;
-
                 Path pre = null;
-                if(recordPath.containsKey(sc))  pre = recordPath.get(sc);
+                if(recordPath[i - 1] != null && recordPath[i - 1].containsKey(sc))
+                    pre = recordPath[i - 1].get(sc);
+
                 Long w = getWeights(pre, p, weightType);
+
 
                 // 排除掉非法路径
                 if(dist[ec] > backup[sc] + w) {
                     dist[ec] = backup[sc] + w;
-                    if(recordPath.containsKey(ec)) recordPath.replace(ec, p);
-                    else recordPath.put(ec, p);
+                    if(recordPath[i].containsKey(ec)) recordPath[i].replace(ec, p);
+                    else recordPath[i].put(ec, p);
                 }
             }
 
         }
-
 
         if(dist[ed] == Long.MAX_VALUE / 2) {
             return null;
@@ -371,11 +382,20 @@ public class Graph {
         List<Path> pathList = new ArrayList<>();
         Integer cur = ed;
 
+        int i = transit + 1;
         while(!cur.equals(st)) {
-            pathList.add(recordPath.get(cur));
-            cur = recordPath.get(cur).getStartCity();
-        }
 
+            int j = i - 1;
+            for(j = i - 1; j >= 1; j --) {
+                if(recordPath[j].containsKey(cur)) {
+                    break;
+                }
+            }
+            i = j;
+            if(i <= 0) break;
+            pathList.add(recordPath[i].get(cur));
+            cur = recordPath[i].get(cur).getStartCity();
+        }
         return pathList;
     }
 }

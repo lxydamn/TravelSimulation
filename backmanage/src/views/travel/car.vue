@@ -8,7 +8,7 @@
       >添加路线</el-button>
 
       <div class="table">
-        <el-table :data="tableData" height="420" style="width: 100%">
+        <el-table :data="tableData" height="620" style="width: 100%">
           <el-table-column prop="id" label="ID" />
           <el-table-column prop="startCity" label="出发城市" />
           <el-table-column prop="endCity" label="到达城市" />

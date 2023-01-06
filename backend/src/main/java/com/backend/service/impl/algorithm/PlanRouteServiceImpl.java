@@ -37,7 +37,7 @@ public class PlanRouteServiceImpl implements PlanRouteService {
         if(paths == null) {
             return null;
         }
-
+        Collections.reverse(paths);
         return new Planed(paths);
     }
 
@@ -55,7 +55,7 @@ public class PlanRouteServiceImpl implements PlanRouteService {
         if(paths == null) {
             return null;
         }
-        System.out.println(new Planed(paths));
+
         return new Planed(paths);
     }
 
