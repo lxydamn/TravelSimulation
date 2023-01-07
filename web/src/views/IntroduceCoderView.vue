@@ -1,6 +1,6 @@
 <template>
   <div class="container-fluid">
-    <div class="card">
+    <div class="card" style="height: 700px;">
       <div class="card-header">
         <h1 style="text-align: center">程序设计综合实践</h1>
       </div>

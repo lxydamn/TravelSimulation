@@ -181,7 +181,9 @@ public class Graph {
         unVisited.remove(st);
 
         //算法部分
-        while(!unVisited.isEmpty()){
+        for(Map.Entry<Integer,List<Integer>> entryf : cities.entrySet())
+        {
+            if(!unVisited.contains(entryf.getKey())) continue;
             Integer city = -1;
             Integer min = Integer.MAX_VALUE;
             for(Map.Entry<Integer,Integer> entry : distRisk.entrySet())
@@ -206,8 +208,8 @@ public class Graph {
                             Integer t1 = cityRisk.getCityRisk(toPaths.get(t).getStartCity())
                                     + cityRisk.getCityRisk(toPaths.get(t).getEndCity())
                                     + risks[toPaths.get(t).getType() - 1];
-                            if(distRisk.get(toPaths.get(t).getEndCity()) == null || distRisk.get(city) == null) continue;
-                            if(distRisk.get(toPaths.get(t).getEndCity()) > distRisk.get(city) + t1) {
+                            if(distRisk.get(toPaths.get(t).getEndCity()) == null ||
+                                    distRisk.get(toPaths.get(t).getEndCity()) > distRisk.get(city) + t1) {
                                 date.put(toPaths.get(t).getEndCity(),toPaths.get(t).getEndTime());
                                 paths.put(toPaths.get(t).getEndCity(),toPaths.get(t));
                             }
@@ -263,7 +265,8 @@ public class Graph {
         unVisited.remove(st);
 
         //算法部分
-        while(!unVisited.isEmpty()){
+        for(Map.Entry<Integer,List<Integer>> entryf : cities.entrySet()) {
+            if(!unVisited.contains(entryf.getKey())) continue;
             Integer city = -1;
             Path min = null;
             boolean mark = true;
@@ -272,6 +275,7 @@ public class Graph {
                 if(unVisited.contains(entry.getKey()) && entry.getValue() != null)
                 {
                     if(mark) {
+                        city = entry.getKey();
                         min = entry.getValue();
                         mark = false;
                         continue;

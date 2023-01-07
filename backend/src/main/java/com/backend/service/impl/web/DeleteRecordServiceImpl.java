@@ -1,9 +1,8 @@
-package com.backend.service.impl.backmanage.path;
+package com.backend.service.impl.web;
 
-
-import com.backend.mapper.PathMapper;
+import com.backend.mapper.PlanMapper;
 import com.backend.pojo.Path;
-import com.backend.service.backmanage.path.DeletePathService;
+import com.backend.service.web.DeleteRecordService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,18 +11,18 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Service
-public class DeletePathServiceImpl implements DeletePathService {
+public class DeleteRecordServiceImpl implements DeleteRecordService {
 
     @Autowired
-    private PathMapper pathMapper;
-    @Override
-    public Map<String, String> deletePath(Map<String, String> map) {
+    private PlanMapper planMapper;
 
+    @Override
+    public Map<String, String> deleteRecord(Map<String, String> map) {
         Map<String, String> resp = new HashMap<>();
 
         try {
             Integer id = Integer.parseInt(map.get("id"));
-            pathMapper.deleteById(id);
+            planMapper.deleteById(id);
         } catch (Exception e) {
             resp.put("error_message", "参数错误或路径不存在");
             return resp;
@@ -31,6 +30,5 @@ public class DeletePathServiceImpl implements DeletePathService {
 
         resp.put("error_message", "success");
         return resp;
-
     }
 }

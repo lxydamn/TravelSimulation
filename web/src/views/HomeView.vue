@@ -188,10 +188,6 @@ export default {
         value: '3',
         label: '花费最少',
       },
-      {
-        value: '4',
-        label: '限制中转次数',
-      },
     ]
 
     const size = ref('default')
@@ -232,7 +228,6 @@ export default {
         else {
           data = resp.data
 
-          console.log(resp.data)
           isEmpty.value = false
           datastartTime.value = resp.data.startTime
           dataendTime.value = resp.data.endTime
@@ -245,7 +240,7 @@ export default {
       })
     }
 
-    let transit = ref('')
+    let transit = ref('-1')
 
     const mock = () => {
       MapContainer.methods.drawpath(datapaths._rawValue);

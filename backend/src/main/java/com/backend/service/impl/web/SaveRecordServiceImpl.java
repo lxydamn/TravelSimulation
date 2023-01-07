@@ -1,5 +1,6 @@
 package com.backend.service.impl.web;
 
+import com.alibaba.fastjson.JSONArray;
 import com.backend.mapper.PlanMapper;
 import com.backend.pojo.Path;
 import com.backend.pojo.Plan;
@@ -22,9 +23,10 @@ public class SaveRecordServiceImpl implements SaveRecordService {
         Integer userId,strategy,startCity,endCity,risk,cost,transit;
         String content;
         Date createdTime = new Date();
+        Object obj = JSONArray.toJSON(map);
         try{
             userId = Integer.parseInt(map.get("userId"));
-            content = map.toString();
+            content = obj.toString();
             startCity = Integer.parseInt(map.get("startCity"));
             endCity = Integer.parseInt(map.get("endCity"));
             strategy = Integer.parseInt(map.get("strategy"));

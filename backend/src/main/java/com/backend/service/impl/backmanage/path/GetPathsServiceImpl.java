@@ -19,7 +19,7 @@ public class GetPathsServiceImpl implements GetPathsService {
     @Override
     public Map<String, List<Path>> getPaths() {
        Map<String, List<Path>> resp = new HashMap<>();
-        QueryWrapper<Path> qw = new QueryWrapper<>();
+       QueryWrapper<Path> qw = new QueryWrapper<>();
 
        resp.put("car", pathMapper.selectList(qw.eq("type", 1)));
        qw.clear();
