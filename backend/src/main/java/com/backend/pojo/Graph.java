@@ -377,8 +377,10 @@ public class Graph {
                 if(recordPath[i - 1] != null && recordPath[i - 1].containsKey(sc))
                     pre = recordPath[i - 1].get(sc);
 
-                Long w = getWeights(pre, p, weightType);
+                if(i != 1 && pre == null)
+                    continue;
 
+                Long w = getWeights(pre, p, weightType);
 
                 // 排除掉非法路径
                 if(dist[ec] > backup[sc] + w) {

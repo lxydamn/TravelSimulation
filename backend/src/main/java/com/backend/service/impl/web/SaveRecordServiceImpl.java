@@ -41,7 +41,6 @@ public class SaveRecordServiceImpl implements SaveRecordService {
         Plan p = new Plan(userId,null,content,createdTime,startCity,endCity,cost,strategy,transit,risk);
         planMapper.insert(p);
         resp.put("error_message", "success");
-        System.out.println(resp);
         return resp;
     }
 }
