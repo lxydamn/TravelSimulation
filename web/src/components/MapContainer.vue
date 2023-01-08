@@ -184,7 +184,6 @@ export default {
           temp.push(t1)
         }
       }
-      console.log(temp)
 
       //创建轨迹组件
       AMapUI.load(['ui/misc/PathSimplifier'], (PathSimplifier) => {
@@ -209,19 +208,14 @@ export default {
             return pathData.path;
           },
           getHoverTitle: function (pathData, pathIndex, pointIndex) {
-            //返回鼠标悬停时显示的信息
-            if (pointIndex >= 0) {
-              //鼠标悬停在某个轨迹节点上
-              return pathData.name + '，点:' + pointIndex + '/' + pathData.path.length;
-            }
-            //鼠标悬停在节点之间的连线上
-            return pathData.name + '，点数量' + pathData.path.length;
+            return null;
           },
+          autoSetFitView: false,
           renderOptions: {
             //轨迹线的样式
             pathLineStyle: {
-              strokeStyle: 'red',
-              lineWidth: 10,
+              strokeStyle: 'rgb(160,219,142)',
+              lineWidth: 8,
               dirArrowStyle: true
             }
           }
@@ -230,7 +224,7 @@ export default {
         window.pathSimplifierIns = pathSimplifierIns
 
         pathSimplifierIns.setData([{
-          name: '轨迹0',
+          name: '规划轨迹',
           path: temp,
         },]);
 
@@ -247,18 +241,30 @@ export default {
           //飞机
           width: 30,
           height: 30,
+          pathLinePassedStyle: {
+            lineWidth: 8,
+            strokeStyle: 'rgb(51,153,255)',
+          },
           content: PathSimplifier.Render.Canvas.getImageContent("https://i.328888.xyz/2023/01/05/WNR3X.png", onload, onerror),
         },
         {
           //汽车
           width: 30,
           height: 30,
+          pathLinePassedStyle: {
+            lineWidth: 8,
+            strokeStyle: 'rgb(51,153,255)',
+          },
           content: PathSimplifier.Render.Canvas.getImageContent("https://i.328888.xyz/2023/01/05/WNcSt.png", onload, onerror),
         },
         {
           //火车
           width: 30,
           height: 30,
+          pathLinePassedStyle: {
+            lineWidth: 8,
+            strokeStyle: 'rgb(51,153,255)',
+          },
           content: PathSimplifier.Render.Canvas.getImageContent('https://i.328888.xyz/2023/01/05/WN3DP.png', onload, onerror),
         }
         ]
@@ -286,7 +292,7 @@ export default {
         //设置巡航器
         let navg0 = pathSimplifierIns.createPathNavigator(0, //关联第1条轨迹
           {
-            speed: 100000,
+            speed: 500000,
             pathNavigatorStyle: extend({}, pathNavigatorStyles[pathSimplifierIns._data.source[0].path[0][2]])
           });
         navg0.start();
@@ -305,7 +311,6 @@ export default {
 
           //重新绘制
           pathSimplifierIns.renderLater();
-          //console.log(type)
         }
         setInterval(changeNavgContent, 50);
       }
