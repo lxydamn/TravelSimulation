@@ -154,6 +154,11 @@ export default {
         pathSimplifierIns.setData([]);
       }
 
+      //清楚计时器
+      if(window.intervalID) {
+        clearInterval(window.intervalID);
+      }
+
       //经纬度数据处理
       let temp = [];
       for (let i = 0; i < paths.length; i++) {
@@ -312,7 +317,7 @@ export default {
           //重新绘制
           pathSimplifierIns.renderLater();
         }
-        setInterval(changeNavgContent, 50);
+        window.intervalID = setInterval(changeNavgContent, 50);
       }
     },
     cityLng: function (adcode) {
