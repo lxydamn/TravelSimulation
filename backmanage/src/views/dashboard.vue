@@ -22,15 +22,15 @@
 					</template>
           <div class="pro-content">
             飞机航线
-            <el-progress :percentage="71.3" color="#42b983"></el-progress>
+            <el-progress :percentage="parseInt(data.plane.length / (data.plane.length + data.car.length + data.train.length) * 1000) / 10" color="#42b983"></el-progress>
           </div>
           <div class="pro-content">
             火车路线
-            <el-progress :percentage="24.1" color="#F25E43FF"></el-progress>
+            <el-progress :percentage="parseInt(data.train.length / (data.plane.length + data.car.length + data.train.length) * 1000) / 10" color="#F25E43FF"></el-progress>
           </div>
           <div class="pro-content">
             汽车路线
-            <el-progress :percentage="13.7"></el-progress>
+            <el-progress :percentage="parseInt(data.car.length / (data.plane.length + data.car.length + data.train.length) * 1000) / 10"></el-progress>
           </div>
 
 				</el-card>
