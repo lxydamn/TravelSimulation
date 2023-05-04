@@ -1,129 +1,39 @@
-# TravelSimulation
+# **TravelSimulation 风险差旅规划系统**
 
-## API
+## 项目简介
 
-### user
+---
 
-```
-/api/user/token/  post
-/api/user/register/ post
-/api/user/info/ get
-```
+新冠流行近三年，给人们的生活和出行带来诸多不便。当前，我国疫情防控工作已取得阶段性重要成效，各地复工复产按下“快进键”，人财物有序流动、产供销有机衔接、内外贸有效贯通的状态正在“重启”，这一态势，是全国疫情防控形势持续向好、生产生活秩序加快恢复的生动呈现。
+在国内外疫情形势依然复杂严峻的情况下，统筹好疫情防控和复工复产，是一个很大的挑战。一方面，各地复工复产、人员回流，增加了疫情防控压力；另一方面，很多公司业务高度依赖出差，跨省市出差的商务合作面临困境；这就要求我们协调处理疫情防控与复工复产的矛盾，把跨省市出差的风险降到最低。
 
-### back
+## 系统描述
 
-```
-/api/back/users/ get
+---
 
-/api/back/addcity/ post
-/api/back/getcities/ get
-/api/back/deletecity/ post
+- 登录/注册（JWT验证方案）
+  
+- 基于用户的选择进行路线的规划采用 Djisktra、Bellman-ford优化
+  
+- 用户管理的路线
+  
+- 后台管理数据
+  
 
+## 项目技术
 
-/api/back/addpath/ post
-/api/back/getpaths/ get
-/api/back/deletepath/ post
-/api/back/modifypath/ post
-```
+---
 
-## 数据库
-
-### user
-
-```
-create table travelsimulation.user
-(
-    id       int auto_increment
-        primary key,
-    username varchar(50)   not null,
-    password varchar(5000) not null,
-    photo    varchar(1000) not null
-);
-```
-
-### city
-
-```
-create table travelsimulation.city
-(
-    city_adcode int           not null
-        primary key,
-    city_name   varchar(50)   not null,
-    grade       int default 0 not null,
-    constraint city_adcode
-        unique (city_adcode)
-);
-```
-
-#### city数据
-
-```
-insert into travelsimulation.city (city_adcode, city_name, grade)
-values  (110100, '北京市', 2),
-        (120100, '天津市', 0),
-        (130100, '石家庄市', 0),
-        (140100, '太原市', 0),
-        (150100, '呼和浩特市', 0),
-        (210100, '沈阳市', 0),
-        (220100, '长春市', 1),
-        (230100, '哈尔滨市', 0),
-        (310100, '上海市', 0),
-        (320100, '南京市', 0),
-        (330100, '杭州市', 0),
-        (340100, '合肥市', 0),
-        (350100, '福州市', 0),
-        (360100, '南昌市', 0),
-        (370100, '济南市', 0),
-        (410100, '郑州市', 0),
-        (420100, '武汉市', 0),
-        (430100, '长沙市', 0),
-        (440100, '广州市', 0),
-        (450100, '南宁市', 0),
-        (460100, '海口市', 0),
-        (500100, '重庆市', 0),
-        (510100, '成都市', 0),
-        (520100, '贵阳市', 0),
-        (530100, '昆明市', 0),
-        (540100, '拉萨市', 0),
-        (610100, '西安市', 0),
-        (620100, '兰州市', 0),
-        (630100, '西宁市', 0),
-        (640100, '银川市', 0),
-        (650100, '乌鲁木齐市', 0),
-        (710100, '台北市', 0),
-        (810000, '香港特别行政区', 0),
-        (820000, '澳门特别行政区', 0);
-```
-
-### plan
-
-```
-create table travelsimulation.plan
-(
-    user_id     int           not null,
-    id          int auto_increment
-        primary key,
-    content     varchar(3000) not null,
-    create_time datetime      not null,
-    constraint id
-        unique (id)
-);
-```
-
-#### path
-
-```
-create table travelsimulation.path
-(
-    id         int auto_increment
-        primary key,
-    start_city int      not null,
-    end_city   int      not null,
-    start_time datetime not null,
-    end_time   datetime not null,
-    cost       int      not null,
-    type       int      not null,
-    constraint id
-        unique (id)
-);
-```
+- Vue3：https://cn.vuejs.org/
+  
+- Element-plus：http://element-plus.org/zh-CN/
+  
+- Axios：https://www.axios-http.cn/
+  
+- 高德地图API：https://lbs.amap.com/api/jsapi-v2/summary/
+  
+- 后台管理网站模板：https://github.com/lin-xin/vue-manage-system.git
+  
+- Mybatis-plus:https://baomidou.com/pages/24112f/
+  
+- JWT(安全验证登陆方案)：https://jwt.io/
